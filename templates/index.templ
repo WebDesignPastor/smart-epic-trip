@@ -1,0 +1,16 @@
+package templates
+
+templ Index() {
+	<html lang="en">
+		<head>
+			<meta charset="utf-8"/>
+			<title>Golang App</title>
+			<link href="/css/output.css" rel="stylesheet"/>
+		</head>
+		<body>
+			<div class="h-screen w-screen bg-black flex items-center justify-center flex-col">
+				@Hello("John")
+			</div>
+		</body>
+	</html>
+}
