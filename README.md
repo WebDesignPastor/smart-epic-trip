@@ -10,7 +10,7 @@ You need to have go, you can follow thoses steps to install it:
 
 To install Tawilwind run :
 
-````
+```
 npm install
 ```
 
