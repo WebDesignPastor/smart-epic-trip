@@ -10,7 +10,25 @@ import "context"
 import "io"
 import "bytes"
 
-func Index() templ.Component {
+import (
+	"fmt"
+	"github.com/joho/godotenv"
+	"log"
+	"os"
+)
+
+// Charger la clé API depuis le fichier .env
+func LoadAPIKey() string {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatalf("Erreur lors du chargement du fichier .env: %v", err)
+	}
+	apiKey := os.Getenv("API_GOOGLEMAP_KEY")
+	fmt.Println("API Key:", apiKey)
+	return apiKey
+}
+
+func ApiMap(name string) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -23,45 +41,42 @@ func Index() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<html lang=\"en\"><head><meta charset=\"utf-8\"><title>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<h1>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Var2 := `Golang App`
+		templ_7745c5c3_Var2 := `My First Google Map`
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var2)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-<<<<<<< HEAD
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</title><script src=\"https://cdn.tailwindcss.com\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</h1><div id=\"googleMap\" style=\"width:100%;height:400px;\"></div><script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Var3 := ``
+		templ_7745c5c3_Var3 := `
+		function myMap() {
+			var mapProp= {
+			center:new google.maps.LatLng(51.508742,-0.120850),
+			zoom:5,
+		};
+		var map = new google.maps.Map(document.getElementById("googleMap"),mapProp);
+		}
+	`
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</script></head><body><div class=\"h-screen w-screen bg-black flex items-center justify-center flex-col\">")
-=======
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</title></head><body><div class=\"h-screen w-screen bg-black flex items-center justify-center flex-col\">")
->>>>>>> 6504d33a4877ea9cec45c81ef28fb9a1a69ea1f0
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</script><script src=\"https://maps.googleapis.com/maps/api/js?key={{LoadAPIKey}}&amp;callback=myMap\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = Hello("Test").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Var4 := ``
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var4)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-<<<<<<< HEAD
-		templ_7745c5c3_Err = SearchForm().Render(ctx, templ_7745c5c3_Buffer)
-=======
-		templ_7745c5c3_Err = ApiMap("").Render(ctx, templ_7745c5c3_Buffer)
->>>>>>> 6504d33a4877ea9cec45c81ef28fb9a1a69ea1f0
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></body></html>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
