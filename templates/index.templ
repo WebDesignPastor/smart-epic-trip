@@ -1,6 +1,6 @@
 package templates
 
-templ Index() {
+templ Index(apiKey string) {
 	<html lang="en">
 		<head>
 			<meta charset="utf-8"/>
@@ -11,7 +11,8 @@ templ Index() {
 			<div class="h-screen w-screen bg-black flex items-center justify-center flex-col">
 				@Hello("Test")
                 @SearchForm()
-                @ApiMap("")
+                @ApiMap(apiKey)
             </div>
 		</body>
 	</html>
+	}
