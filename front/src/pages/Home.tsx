@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { RootState } from "../redux/index"
 import { useSelector } from "react-redux"
 import { useDispatch } from "react-redux"
