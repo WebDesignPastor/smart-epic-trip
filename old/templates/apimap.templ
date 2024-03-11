@@ -13,7 +13,7 @@ func LoadAPIKey() string {
     if err != nil {
         log.Fatalf("Erreur lors du chargement du fichier .env: %v", err)
     }
-    apiKey := os.Getenv("API_GOOGLEMAP_KEY")
+    apiKey := os.Getenv("API_GOOGLEMAP_KEY") 
 	fmt.Println("API Key:", apiKey)
     return apiKey
 }
@@ -28,9 +28,11 @@ templ ApiMap(name string) {
 			var mapProp= {
 			center:new google.maps.LatLng(51.508742,-0.120850),
 			zoom:5,
-		};
+			};
 		var map = new google.maps.Map(document.getElementById("googleMap"),mapProp);
 		}
+
+
 	</script>
 
 	<script src="https://maps.googleapis.com/maps/api/js?key={{LoadAPIKey}}&callback=myMap"></script>
