@@ -1,8 +1,21 @@
 services:
-  api:
-    build: .
+  # back:
+  #   build: 
+  #     context: ./back
+  #     dockerfile: Dockerfile-back
+  #   ports:
+  #     - "8080:8080"
+  #   volumes:
+  #     - ./back:/app
+  #   restart: on-failure
+
+  front:
+    build:
+      context: ./front
+      dockerfile: Dockerfile-front
     ports:
-      - "8080:8080"
+      - "8000:8000"
     volumes:
-      - .:/app
-    restart: on-failure
+      - ./front:/app
+      - /app/node_modules
+    tty: true

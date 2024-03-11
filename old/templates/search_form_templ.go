@@ -10,25 +10,7 @@ import "context"
 import "io"
 import "bytes"
 
-import (
-	"fmt"
-	"github.com/joho/godotenv"
-	"log"
-	"os"
-)
-
-// Charger la clé API depuis le fichier .env
-func LoadAPIKey() string {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatalf("Erreur lors du chargement du fichier .env: %v", err)
-	}
-	apiKey := os.Getenv("API_GOOGLEMAP_KEY")
-	fmt.Println("API Key:", apiKey)
-	return apiKey
-}
-
-func ApiMap(name string) templ.Component {
+func SearchForm() templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -41,42 +23,34 @@ func ApiMap(name string) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<h1>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form action=\"/search\" method=\"GET\" class=\"flex justify-center items-center gap-4\"><div class=\"flex flex-col\"><label for=\"departure\" class=\"text-white\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Var2 := `My First Google Map`
+		templ_7745c5c3_Var2 := `Departure City:`
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var2)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</h1><div id=\"googleMap\" style=\"width:100%;height:400px;\"></div><script>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</label> <input type=\"text\" id=\"departure\" name=\"departure\" required class=\"rounded px-2 py-1\"></div><div class=\"flex flex-col\"><label for=\"arrival\" class=\"text-white\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Var3 := `
-		function myMap() {
-			var mapProp= {
-			center:new google.maps.LatLng(51.508742,-0.120850),
-			zoom:5,
-		};
-		var map = new google.maps.Map(document.getElementById("googleMap"),mapProp);
-		}
-	`
+		templ_7745c5c3_Var3 := `Arrival City:`
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</script><script src=\"https://maps.googleapis.com/maps/api/js?key={{LoadAPIKey}}&amp;callback=myMap\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</label> <input type=\"text\" id=\"arrival\" name=\"arrival\" required class=\"rounded px-2 py-1\"></div><button type=\"submit\" class=\"bg-blue-500 text-white rounded px-4 py-2\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Var4 := ``
+		templ_7745c5c3_Var4 := `Search`
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var4)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</script>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</button></form>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
