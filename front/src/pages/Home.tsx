@@ -19,7 +19,7 @@ const HomePage = () => {
     return (
         <div>
             <input onChange={handleTextInput} value={textInput} />
-            <button onClick={handleClick} >Submit</button>
+            <button onClick={handleClick} className="text-red-500">Submit</button>
             <div>
                 {
                     issueList?.map((issue: string) => {
