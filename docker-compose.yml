@@ -1,13 +1,13 @@
 services:
-  back:
-    build: 
-      context: ./back
-      dockerfile: Dockerfile-back
-    ports:
-      - "8080:8080"
-    volumes:
-      - ./back:/app
-    restart: on-failure
+  # back:
+  #   build: 
+  #     context: ./back
+  #     dockerfile: Dockerfile-back
+  #   ports:
+  #     - "8080:8080"
+  #   volumes:
+  #     - ./back:/app
+  #   restart: on-failure
 
   front:
     build:

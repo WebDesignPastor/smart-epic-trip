@@ -1,8 +1,14 @@
+import { Provider } from "react-redux"
+import { store } from "./redux"
+import HomePage from "./pages/Home"
+
 function App() {
 
   return (
     <>
-      <h1>Hello world !</h1>
+      <Provider store={store}>
+        <HomePage />
+      </Provider>
     </>
   )
 }
