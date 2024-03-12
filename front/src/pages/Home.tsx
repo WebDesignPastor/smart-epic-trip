@@ -8,8 +8,10 @@ const Home: React.FC = () => {
     return <h1>{status}</h1>;
   };
 
+  const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY
+  
   return (
-    <Wrapper apiKey={import.meta.env.API_GOOGLEMAP_KEY} render={render}>
+    <Wrapper apiKey={apiKey} render={render}>
         <CityMap defaultLat={40.7128} defaultLng={-74.0060} defaultZoom={12} />
     </Wrapper>
   );
