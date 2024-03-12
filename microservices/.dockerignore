@@ -1,0 +1,14 @@
+# Ignore node_modules and other build artifacts
+node_modules
+yarn-error.log
+.pnp.*
+.DS_Store
+*.log
+*.tsbuildinfo
+build/**
+
+# Ignore other development files
+.vscode
+.idea
+*.sublime*
+.editorconfig
