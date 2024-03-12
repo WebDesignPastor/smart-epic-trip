@@ -1,16 +1,18 @@
-import CityForm from '../components/CityForm'; // Adjust the import path as necessary
+// Home.tsx
+import React from 'react';
+import { Wrapper, Status } from "@googlemaps/react-wrapper";
+import CityMap from '../components/CityMap'; // Corrected import path
 
-const HomePage = () => {
-    const handleFormSubmit = (departure: string, arrival: string) => {
-        console.log(`Departure: ${departure}, Arrival: ${arrival}`);
-    };
+const Home: React.FC = () => {
+  const render = (status: Status) => {
+    return <h1>{status}</h1>;
+  };
 
-    return (
-        <div>
-            <h1>Welcome to EpicRoadTrip !</h1>
-            <CityForm onSubmit={handleFormSubmit} />
-        </div>
-    );
-};
+  return (
+    <Wrapper apiKey={import.meta.env.API_GOOGLEMAP_KEY} render={render}>
+        <CityMap defaultLat={40.7128} defaultLng={-74.0060} defaultZoom={12} />
+    </Wrapper>
+  );
+}
 
-export default HomePage;
+export default Home;
