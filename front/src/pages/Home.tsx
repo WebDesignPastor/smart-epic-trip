@@ -1,39 +1,16 @@
-import { useState } from "react"
-import { RootState } from "../redux/index"
-import { useSelector } from "react-redux"
-import { useDispatch } from "react-redux"
-import { addIssue } from "../slices/store"
+import CityForm from '../components/CityForm'; // Adjust the import path as necessary
 
 const HomePage = () => {
-
-    const dispatch = useDispatch()
-    const issueList = useSelector((state: RootState) => state.issue.issues)
-    const [textInput, setTextInput] = useState('')
-    const handleTextInput = (e:any) => {
-        setTextInput(e.target.value)
-    }
-    const handleClick = () => {
-        dispatch(addIssue(textInput))
-    }
+    const handleFormSubmit = (departure: string, arrival: string) => {
+        console.log(`Departure: ${departure}, Arrival: ${arrival}`);
+    };
 
     return (
         <div>
-            <input onChange={handleTextInput} value={textInput} />
-            <button onClick={handleClick} className="text-red-500">Submit</button>
-            <div>
-                {
-                    issueList?.map((issue: string) => {
-                        return(
-                            <>
-                                <span>{issue}</span>
-                                <br/>
-                            </>
-                        )
-                    })
-                }
-            </div>
+            <h1>Welcome to EpicRoadTrip !</h1>
+            <CityForm onSubmit={handleFormSubmit} />
         </div>
-    )
-}
+    );
+};
 
-export default HomePage
+export default HomePage;
