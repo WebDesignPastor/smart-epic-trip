@@ -1,21 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { loadGoogleMapsAPI } from '../assets/loadGoogleMapsAPI';
 
-const CityForm = ({ onSubmit }) => {
+interface CityFormProps {
+    onSubmit: (departure: string, arrival: string) => void;
+  }
+
+const CityForm: React.FC<CityFormProps> = ({ onSubmit }) => {
     const [departure, setDeparture] = useState('');
     const [arrival, setArrival] = useState('');
     const [submissionMessage, setSubmissionMessage] = useState('');
 
     useEffect(() => {
         loadGoogleMapsAPI(() => {
-            // Initialize autocomplete for both input fields after the API script has loaded
-            const options = { types: ['(cities)'] }; // Restrict search to cities
-            new window.google.maps.places.Autocomplete(document.getElementById('departure'), options);
-            new window.google.maps.places.Autocomplete(document.getElementById('arrival'), options);
+            const options = { types: ['(cities)'] };
+            new window.google.maps.places.Autocomplete(document.getElementById('departure') as HTMLInputElement, options);
+            new window.google.maps.places.Autocomplete(document.getElementById('arrival') as HTMLInputElement, options);
         });
     }, []);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = (e: { preventDefault: () => void; }) => {
         e.preventDefault();
         onSubmit(departure, arrival);
         setSubmissionMessage(`Vous allez de ${departure} à ${arrival}`);
