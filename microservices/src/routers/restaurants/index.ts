@@ -19,7 +19,7 @@ export const restaurantPlugin = async (fastify: FastifyInstance) => {
 
                 params.radius = params.radius ? params.radius : config.options.radius
 
-                const result = await getRestaurants(params)
+                const result: IRestaurantResult[] = await getRestaurants(params)
                 return result
             } catch (error: any) {
                 throw new HttpError(error.statusCode, error.message)

@@ -1,5 +1,4 @@
 import config from "../../../config"
-import { preparedParams } from "../../../utils/service"
 import HttpError from "../../httpError"
 import axios from "axios"
 
