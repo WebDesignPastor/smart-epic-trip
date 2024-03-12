@@ -17,7 +17,17 @@ const CityMap: React.FC<CityMapProps> = ({ defaultLat, defaultLng, defaultZoom }
           center: { lat: defaultLat, lng: defaultLng },
           zoom: defaultZoom,
         };
-        setMap(new window.google.maps.Map(mapRef.current, mapOptions));
+        const newMap = new window.google.maps.Map(mapRef.current, mapOptions)
+
+        console.log('Latitude:', defaultLat, 'Longitude:', defaultLng, 'Zoom:', defaultZoom);
+        
+        newMap.addListener('center_changed', () => {
+          const center = newMap.getCenter();
+          const zoom = newMap.getZoom();
+          console.log('Latitude:', center.lat(), 'Longitude:', center.lng(), 'Zoom:', zoom);
+        });
+
+        setMap(newMap);
       }
     }, [defaultLat, defaultLng, defaultZoom, map]);
   
