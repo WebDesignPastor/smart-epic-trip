@@ -13,6 +13,7 @@ services:
     build:
       context: ./front
       dockerfile: Dockerfile-front
+    container_name: front
     ports:
       - "8000:8000"
     volumes:
