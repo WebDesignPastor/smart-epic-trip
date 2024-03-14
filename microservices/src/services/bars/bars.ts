@@ -6,7 +6,7 @@ const type = "bar"
 
 const baseUrl = `${config.services.googleApi.url}?key=${config.services.googleApi.apiKey}&type=${type}`
 
-export const getBars = async (params: RestaurantReqParams) => {
+export const getBars = async (params: PlaceApiReqParams) => {
     try {
         const fullUrl = `${baseUrl}&location=${params.location}&radius=${params.radius}&keyword=bar`
         const result = await axios.get(fullUrl)

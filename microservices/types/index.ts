@@ -1,4 +1,4 @@
-interface RestaurantResResult {
+interface PlaceApiResResult {
     business_status: string;
     geometry: IGeometry;
     icon: string;
@@ -67,7 +67,7 @@ interface IGeometry {
     global_code: string;
   }
   
-  interface RestaurantReqParams {
+  interface PlaceApiReqParams {
     radius?: number;
     keyword?: string;
     opennow?: boolean;

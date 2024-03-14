@@ -9,7 +9,7 @@ export const barPlugin = async (fastify: FastifyInstance) => {
         "/bars/all",
         async (request: FastifyRequest, reply: FastifyReply) => {
             try {
-                const params = request.query as RestaurantReqParams
+                const params = request.query as PlaceApiReqParams
 
                 params.location = params.location ? params.location : config.options.baseLocation
 
@@ -19,7 +19,7 @@ export const barPlugin = async (fastify: FastifyInstance) => {
                     return noApiKey
                 }
 
-                const result: RestaurantResResult[] = await getBars(params)
+                const result: PlaceApiResResult[] = await getBars(params)
                 reply.send(result)
             } catch (error: any) {
                 reply.send({status: error.statusCode, message: error.message})

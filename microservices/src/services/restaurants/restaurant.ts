@@ -6,7 +6,7 @@ const type = "restaurant"
 
 const baseUrl = `${config.services.googleApi.url}?key=${config.services.googleApi.apiKey}&type=${type}`
 
-export const getRestaurants = async (params: RestaurantReqParams) => {
+export const getRestaurants = async (params: PlaceApiReqParams) => {
     try {
         if (!config.services.googleApi.apiKey) {
             return noApiKey

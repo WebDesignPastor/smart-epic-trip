@@ -8,7 +8,7 @@ export const restaurantPlugin = async (fastify: FastifyInstance) => {
         "/restaurants/all",
         async (request: FastifyRequest, reply: FastifyReply) => {
             try {
-                const params = request.query as RestaurantReqParams
+                const params = request.query as PlaceApiReqParams
 
                 // if (!params.pagetoken) {
                 //     return new HttpError(400, "pagetoken is required")
@@ -18,7 +18,7 @@ export const restaurantPlugin = async (fastify: FastifyInstance) => {
 
                 params.radius = params.radius ? params.radius : config.options.radius
 
-                const result: RestaurantResResult[] = await getRestaurants(params)
+                const result: PlaceApiResResult[] = await getRestaurants(params)
                 reply.send(result)
             } catch (error: any) {
                 reply.send({status: error.statusCode, message: error.message})
