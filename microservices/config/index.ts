@@ -10,7 +10,7 @@ const config = {
     },
     options: {
         radius: Number(process.env.RADIUS) || 50000,
-        baseLocation: Number(process.env.BASE_LOCATION) || "48.6483208,-2.0347205"
+        baseLocation: process.env.BASE_LOCATION || "48.6483208,-2.0347205"
     },
 }
 
