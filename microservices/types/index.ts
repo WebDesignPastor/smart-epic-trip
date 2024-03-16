@@ -1,14 +1,14 @@
-interface IRestaurantResult {
+interface PlaceApiResResult {
     business_status: string;
     geometry: IGeometry;
     icon: string;
     icon_background_color: string;
     icon_mask_base_uri: string;
     name: string;
-    opening_hours: IOpeningHours;
-    photos: IPhoto[];
+    opening_hours: OpeningHours;
+    photos: Photo[];
     place_id: string;
-    plus_code: IPlusCode;
+    plus_code: PlusCode;
     price_level: number;
     rating: number;
     reference: string;
@@ -18,65 +18,61 @@ interface IRestaurantResult {
     vicinity: string;
 }
 
-interface ILocation {
+interface Location {
     lat: number;
     lng: number;
 }
 
 interface IGeometry {
-    location: ILocation;
-    viewport: IViewport;
+    location: Location;
+    viewport: Viewport;
   }
   
-  interface IViewport {
-    northeast: ILocation;
-    southwest: ILocation;
+  interface Viewport {
+    northeast: Location;
+    southwest: Location;
   }
   
-  interface IOpeningHours {
+  interface OpeningHours {
     open_now: boolean;
-    periods: IPeriod[];
+    periods: Period[];
     weekday_text: string[];
   }
   
-  interface IPeriod {
-    close: IClose;
-    open: IOpen;
+  interface Period {
+    close: Close;
+    open: Open;
   }
   
-  interface IClose {
+  interface Close {
     day: number;
     time: string;
   }
   
-  interface IOpen {
+  interface Open {
     day: number;
   
     time: string;
   }
   
-  interface IPhoto {
+  interface Photo {
     height: number;
     html_attributions: string[];
     photo_reference: string;
     width: number;
   }
   
-  interface IPlusCode {
+  interface PlusCode {
     compound_code: string;
     global_code: string;
   }
   
-  interface IRestaurantParams {
+  interface PlaceApiReqParams {
     radius?: number;
     keyword?: string;
     opennow?: boolean;
     location?: string;
     pagetoken?: string;
     rankby?: "prominence" | "distance"; 
-  }
-  
-  interface IRestaurantBody {
-    location: ILocation;
   }
   
