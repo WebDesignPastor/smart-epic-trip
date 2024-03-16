@@ -1,6 +1,5 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import config from "../../../config";
-import { getRestaurants } from "../../services/restaurants/restaurant";
 import { noApiKey } from "../../../utils/const";
 import { getHotels } from "../../services/hotel/hotel";
 

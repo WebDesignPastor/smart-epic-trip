@@ -1,5 +1,4 @@
 import config from "../../../config"
-import { noApiKey } from "../../../utils/const"
 import axios from "axios"
 
 const type = "bar"
