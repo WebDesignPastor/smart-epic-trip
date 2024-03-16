@@ -2,7 +2,8 @@ import fastify from 'fastify'
 import cors from "@fastify/cors"
 import {
   restaurantPlugin,
-  barPlugin
+  barPlugin,
+  hotelPlugin
 } from "./router"
 
 const server = fastify()
@@ -12,6 +13,7 @@ server.register(cors, {
 })
 server.register(restaurantPlugin)
 server.register(barPlugin)
+server.register(hotelPlugin)
 
 server.get('/ping', async (request, reply) => {
   return 'pong\n'
