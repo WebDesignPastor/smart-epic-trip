@@ -1,19 +1,19 @@
 import React from 'react';
-import { Wrapper, Status } from "@googlemaps/react-wrapper";
-import CityMap from '../components/CityMap'; // Corrected import path
+import MapView from '../components/MapView';
 
 const Map: React.FC = () => {
-
-    const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY
-
-    const render = (status: Status) => {
-        return <h1>{status}</h1>;
-    };
   
+    const containerStyle = {
+        width: '100%',
+        height: '100%',
+        margin: '0 auto',
+        zoomDef: 8
+    }
+
     return (
-        <Wrapper apiKey={apiKey} render={render}>
-            <CityMap defaultLat={40.7128} defaultLng={-74.0060} defaultZoom={12} />
-        </Wrapper>
+        <div className="flex flex-col items-center justify-center h-screen">
+            <MapView width={containerStyle.width} height={containerStyle.height} zoomDef={containerStyle.zoomDef} margin={containerStyle.margin}  />
+        </div>
     );
 
 }

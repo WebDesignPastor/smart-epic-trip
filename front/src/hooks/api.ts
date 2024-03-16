@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { SetStateAction, useEffect, useState } from "react";
 
-export const useApi = (url: string, options?: AxiosRequestConfig) => {
+const fetchApi = (url: string, options?: AxiosRequestConfig) => {
     const [data, setData] = useState(null)
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState(null)
@@ -25,3 +25,5 @@ export const useApi = (url: string, options?: AxiosRequestConfig) => {
 
     return { data, isLoading, error}
 }
+
+export default fetchApi

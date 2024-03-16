@@ -24,7 +24,9 @@ const CityMap: React.FC<CityMapProps> = ({ defaultLat, defaultLng, defaultZoom }
         newMap.addListener('center_changed', () => {
           const center = newMap.getCenter();
           const zoom = newMap.getZoom();
-          console.log('Latitude:', center.lat(), 'Longitude:', center.lng(), 'Zoom:', zoom);
+          if(center) {
+            console.log('Latitude:', center.lat(), 'Longitude:', center.lng(), 'Zoom:', zoom);
+          }
         });
 
         setMap(newMap);
