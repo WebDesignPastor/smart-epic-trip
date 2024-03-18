@@ -8,15 +8,7 @@ interface CityFormProps {
 const CityForm: React.FC<CityFormProps> = ({ onSubmit }) => {
     const [departure, setDeparture] = useState('');
     const [arrival, setArrival] = useState('');
-    const [submissionMessage, setSubmissionMessage] = useState('');
-
-    useEffect(() => {
-        loadGoogleMapsAPI(() => {
-            const options = { types: ['(cities)'] };
-            new window.google.maps.places.Autocomplete(document.getElementById('departure') as HTMLInputElement, options);
-            new window.google.maps.places.Autocomplete(document.getElementById('arrival') as HTMLInputElement, options);
-        });
-    }, []);
+    const [submissionMessage, setSubmissionMessage] = useState('')
 
     const handleSubmit = (e: { preventDefault: () => void; }) => {
         e.preventDefault();

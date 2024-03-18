@@ -9,15 +9,13 @@ COPY package.json yarn.lock ./
 COPY tsconfig.json .
 
 # Install the application dependencies with yarn
-RUN yarn
+RUN npm install
 
 # Copy the rest of the application code to the working directory
 COPY . .
-
-RUN yarn build
 
 # Expose port 8080 to the outside world
 EXPOSE 8080
 
 # Define the command to start the application
-CMD ["yarn", "start"]
+CMD ["npm", "run", "dev"]

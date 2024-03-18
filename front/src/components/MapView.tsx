@@ -1,4 +1,4 @@
-import { GoogleMap, LoadScript, OverlayView, useJsApiLoader } from "@react-google-maps/api"
+import { DirectionsRenderer, GoogleMap, LoadScript, OverlayView, useJsApiLoader } from "@react-google-maps/api"
 import React, { useEffect, useRef, useState } from "react"
 import axios from "axios"
 import MarkerLogo from "./MarkerLogo"
@@ -84,7 +84,9 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
     const createCustomMarker = (data: PlaceApiResResult[], type: string) => {
         let newMarkerCollection: Markers[] = markers
         data.map((res: PlaceApiResResult) => {
-            newMarkerCollection.push({lat: res.geometry.location.lat, lng: res.geometry.location.lng, id: res.place_id, type: type})
+            if(!newMarkerCollection.find((e:Markers) => e.id === res.place_id)) {
+                newMarkerCollection.push({lat: res.geometry.location.lat, lng: res.geometry.location.lng, id: res.place_id, type: type})
+            }
         })
         setMarkers(newMarkerCollection)
         setIsLoading(false)
@@ -179,6 +181,7 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
                     onDragEnd={mapOnChange}
                     onZoomChanged={mapOnChange}
                 >
+                    <DirectionsRenderer />
                     {markers && markers.map((marker) => (
                         // <Marker 
                         //     key={marker.id}
