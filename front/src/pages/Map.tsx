@@ -7,7 +7,7 @@ const Map: React.FC = () => {
         width: '100%',
         height: '100%',
         margin: '0 auto',
-        zoomDef: 8
+        zoomDef: 9
     }
 
     return (

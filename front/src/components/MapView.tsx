@@ -1,5 +1,5 @@
 import { GoogleMap, LoadScript, OverlayView, useJsApiLoader } from "@react-google-maps/api"
-import React, { useRef, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import axios from "axios"
 import MarkerLogo from "./MarkerLogo"
 import MapOptions from "./MapOptions"
@@ -163,8 +163,6 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
         }
     }
 
-    console.log(markers)
-    console.log(mapRadius)
     return (
         <>  
             <MapOptions searchHotel={searchHotel} searhBars={searhBars} searhRestaurants={searhRestaurants} 
