@@ -1,8 +1,13 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
+interface Location {
+    lat: number
+    lng: number
+}
+
 interface Directions {
-    origin: string
-    destination: string
+    origin: Location
+    destination: Location
 }
 
 export interface InitialState {

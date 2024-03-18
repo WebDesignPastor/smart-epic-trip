@@ -2,9 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { loadGoogleMapsAPI } from '../utils/loadGoogleMapsAPI';
 import { useDispatch } from 'react-redux';
 import { addDirection } from '../slices/store';
-import { useSelector } from 'react-redux';
-import { RootState } from '../redux';
 import axios from 'axios';
+import { useNavigate } from "react-router-dom"
 
 interface CityFormProps {
     onSubmit: (departure: string, arrival: string) => void;
@@ -12,12 +11,12 @@ interface CityFormProps {
 
 const CityForm: React.FC<CityFormProps> = ({ onSubmit }) => {
     const dispatch = useDispatch()
-    const directions = useSelector((state: RootState) => state.app.directions)
     const apiUrl = import.meta.env.VITE_API_URL
     const [departure, setDeparture] = useState('')
     const [arrival, setArrival] = useState('')
     const [submissionMessage, setSubmissionMessage] = useState('')
     const [isLoading, setIsLoading] = useState(false)
+    const navigate = useNavigate()
 
     // Refs for the Autocomplete instances
     const departureAutocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
@@ -51,15 +50,19 @@ const CityForm: React.FC<CityFormProps> = ({ onSubmit }) => {
 
     const handleSubmit = async (e: { preventDefault: () => void; }) => {
         e.preventDefault()
-        onSubmit(departure, arrival)
-        setSubmissionMessage(`Vous allez de ${departure} à ${arrival}`)
-        const departureLocationReq = await axios.get(`${apiUrl}/geocode?address=${departure}`)
-        const arrivalLocationReq = await axios.get(`${apiUrl}/geocode?address=${arrival}`)
-        const departureLocation = departureLocationReq.data.results[0].geometry.location
-        const arrivalLocation = arrivalLocationReq.data.results[0].geometry.location
-        console.log(departureLocation, arrivalLocation)
-        let destinations = {origin: departure, destination: arrival}
-        dispatch(addDirection(destinations))
+        if(departure !== '' && arrival !== '') {
+            setIsLoading(!isLoading)
+            onSubmit(departure, arrival)
+            setSubmissionMessage(`Vous allez de ${departure} à ${arrival}`)
+            const departureLocationReq = await axios.get(`${apiUrl}/geocode?address=${departure}`)
+            const arrivalLocationReq = await axios.get(`${apiUrl}/geocode?address=${arrival}`)
+            const departureLocation = departureLocationReq.data.results[0].geometry.location
+            const arrivalLocation = arrivalLocationReq.data.results[0].geometry.location
+            let destinations = {origin: departureLocation, destination: arrivalLocation}
+            dispatch(addDirection(destinations))
+            setIsLoading(!isLoading)
+            navigate('/map')
+        }
     }
 
     return (

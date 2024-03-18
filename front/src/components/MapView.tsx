@@ -4,6 +4,8 @@ import axios from "axios"
 import MarkerLogo from "./MarkerLogo"
 import MapOptions from "./MapOptions"
 import { calculateDistance } from "../utils/distance"
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux';
 
 export interface Markers {
     id: string
@@ -28,6 +30,7 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
 
     const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY
     const apiUrl = import.meta.env.VITE_API_URL
+    const baseDirections = useSelector((state: RootState) => state.app.directions)
     const defaultMapOptions = {
         fullscreenControl: false,
         streetViewControl: false,
@@ -78,20 +81,19 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
 
     // set the route 
     const directionService = new google.maps.DirectionsService()
+    let origin: google.maps.LatLngLiteral = {lat: 48.084328, lng: -1.68333}
+    let destination: google.maps.LatLngLiteral = { lat: 47.750000, lng: -3.3666700 }
     let waypoints: Waypoint[] = [
         { location: { lat: 47.666672, lng: -2.750000 }, stopover: true },
         { location: { lat: 47.766670, lng: -3.116670 }, stopover: true }
     ]
-    let origin: google.maps.LatLngLiteral = {lat: 48.084328, lng: -1.68333}
-    let destination: google.maps.LatLngLiteral = { lat: 47.750000, lng: -3.3666700 }
     let directionsOptions: google.maps.DirectionsRequest = {
         origin: origin,
         destination: destination,
-        waypoints: waypoints,
+        // waypoints: waypoints,
         travelMode: 'DRIVING' as google.maps.TravelMode,
-        avoidHighways: true
+        avoidHighways: false
     }
-
     // const createMarker = (lat: number, lng: number, id: string, centerCoord: any) => {
     //     if(centerCoord) {
     //         const newMarker = {
@@ -157,6 +159,7 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
 
     const mapOnLoad = (map: google.maps.Map) => {
         if(map) {
+            let newCenter = {lat: mapRef.current?.getCenter()?.lat()!, lng: mapRef.current?.getCenter()?.lng()! }
             mapRef.current = map
             const bounds = map.getBounds()
             if(bounds) {
@@ -167,18 +170,24 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
 
                 setMapRadius(distance)
             }
-            directionService.route(directionsOptions, (res, status) => {
-                if(status === 'OK') {
-                    setDirections(res)
-                } else {
-                    console.log('Error', status)
-                }
-            })
+            if(baseDirections[0]) {
+                directionsOptions.origin = baseDirections[0].origin
+                directionsOptions.destination = baseDirections[0].destination
+                directionService.route(directionsOptions, (res, status) => {
+                    if(status === 'OK') {
+                        setCenter(newCenter)
+                        setDirections(res)
+                    } else {
+                        console.log('Error', status)
+                    }
+                })
+            }
         }
     }
 
     const mapOnChange = () => {
         if(mapRef != null) {
+            let newCenter = {lat: mapRef.current?.getCenter()?.lat()!, lng: mapRef.current?.getCenter()?.lng()! }
             const bounds = mapRef.current?.getBounds()
             if(bounds) {
                 const ne = bounds.getNorthEast()
@@ -191,13 +200,18 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
                 setHotelsSearching(false)
                 setRestaurantsSearching(false)
             }
-            directionService.route(directionsOptions, (res, status) => {
-                if(status === 'OK') {
-                    setDirections(res)
-                } else {
-                    console.log('Error', status)
-                }
-            })
+            if(baseDirections[0]) {
+                directionsOptions.origin = baseDirections[0].origin
+                directionsOptions.destination = baseDirections[0].destination
+                directionService.route(directionsOptions, (res, status) => {
+                    if(status === 'OK') {
+                        setCenter(newCenter)
+                        setDirections(res)
+                    } else {
+                        console.log('Error', status)
+                    }
+                })
+            }
         }
     }
 
@@ -208,31 +222,36 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
             isBarsSearching={isBarsSearching} setBarsSearching={setBarsSearching} isRestaurantsSearching={isRestaurantsSearching} 
             setRestaurantsSearching={setRestaurantsSearching} setMarkers={setMarkers} markers={markers} />
             <div className="w-full h-full">
-                <GoogleMap
-                    mapContainerStyle={style}
-                    center={center}
-                    zoom={zoomDef}
-                    onLoad={(map) => mapOnLoad(map)}
-                    options={defaultMapOptions}
-                    onDragEnd={mapOnChange}
-                    onZoomChanged={mapOnChange}
-                >
-                    {directions && <DirectionsRenderer directions={directions} />}
-                    {markers && markers.map((marker) => (
-                        // <Marker 
-                        //     key={marker.id}
-                        //     position={}
-                        //     label=''
-                        // />
-                        <OverlayView
-                            position={{lat: marker.lat, lng: marker.lng}}
-                            mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
-                            key={marker.id}
+                {baseDirections[0] ?
+                        <GoogleMap
+                        mapContainerStyle={style}
+                        center={center}
+                        zoom={zoomDef}
+                        onLoad={(map) => mapOnLoad(map)}
+                        options={defaultMapOptions}
+                        onDragEnd={mapOnChange}
+                        onZoomChanged={mapOnChange}
                         >
-                                {renderSwitch(marker)}
-                        </OverlayView>
-                    ))}
-                </GoogleMap>
+                            {directions && <DirectionsRenderer directions={directions} options={{preserveViewport: true}}/>}
+                            {markers && markers.map((marker) => (
+                                // <Marker 
+                                //     key={marker.id}
+                                //     position={}
+                                //     label=''
+                                // />
+                                <OverlayView
+                                    position={{lat: marker.lat, lng: marker.lng}}
+                                    mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+                                    key={marker.id}
+                                >
+                                        {renderSwitch(marker)}
+                                </OverlayView>
+                            ))}
+                        </GoogleMap>
+                    :
+                        <p>loading</p>
+                }
+                
             </div>
         </>
     )
