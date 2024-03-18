@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { loadGoogleMapsAPI } from '../assets/loadGoogleMapsAPI';
+import { loadGoogleMapsAPI } from '../utils/loadGoogleMapsAPI';
 
 interface CityFormProps {
     onSubmit: (departure: string, arrival: string) => void;
