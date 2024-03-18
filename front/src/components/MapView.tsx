@@ -1,4 +1,4 @@
-import { DirectionsRenderer, GoogleMap, LoadScript, OverlayView, useJsApiLoader } from "@react-google-maps/api"
+import { DirectionsRenderer, GoogleMap, OverlayView, useJsApiLoader } from "@react-google-maps/api"
 import React, { useEffect, useRef, useState } from "react"
 import axios from "axios"
 import MarkerLogo from "./MarkerLogo"
@@ -17,6 +17,11 @@ interface Props {
     height: string
     zoomDef: number
     margin: string
+}
+
+interface Waypoint {
+    location: google.maps.LatLngLiteral
+    stopover: boolean
 }
 
 const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
@@ -56,6 +61,7 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
     }
 
     const [center, setCenter] = useState({lat: 48.084328, lng: -1.68333})
+    const [directions, setDirections] = useState<google.maps.DirectionsResult | null>(null)
     const mapRef = useRef<google.maps.Map>()
     const [markers, setMarkers] = useState<Markers[]>([])
     const [isLoading, setIsLoading] = useState(true)
@@ -68,6 +74,22 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
 
     if(!isLoaded) {
         return null
+    }
+
+    // set the route 
+    const directionService = new google.maps.DirectionsService()
+    let waypoints: Waypoint[] = [
+        { location: { lat: 47.666672, lng: -2.750000 }, stopover: true },
+        { location: { lat: 47.766670, lng: -3.116670 }, stopover: true }
+    ]
+    let origin: google.maps.LatLngLiteral = {lat: 48.084328, lng: -1.68333}
+    let destination: google.maps.LatLngLiteral = { lat: 47.750000, lng: -3.3666700 }
+    let directionsOptions: google.maps.DirectionsRequest = {
+        origin: origin,
+        destination: destination,
+        waypoints: waypoints,
+        travelMode: 'DRIVING' as google.maps.TravelMode,
+        avoidHighways: true
     }
 
     // const createMarker = (lat: number, lng: number, id: string, centerCoord: any) => {
@@ -145,6 +167,13 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
 
                 setMapRadius(distance)
             }
+            directionService.route(directionsOptions, (res, status) => {
+                if(status === 'OK') {
+                    setDirections(res)
+                } else {
+                    console.log('Error', status)
+                }
+            })
         }
     }
 
@@ -162,6 +191,13 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
                 setHotelsSearching(false)
                 setRestaurantsSearching(false)
             }
+            directionService.route(directionsOptions, (res, status) => {
+                if(status === 'OK') {
+                    setDirections(res)
+                } else {
+                    console.log('Error', status)
+                }
+            })
         }
     }
 
@@ -181,7 +217,7 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
                     onDragEnd={mapOnChange}
                     onZoomChanged={mapOnChange}
                 >
-                    <DirectionsRenderer />
+                    {directions && <DirectionsRenderer directions={directions} />}
                     {markers && markers.map((marker) => (
                         // <Marker 
                         //     key={marker.id}
