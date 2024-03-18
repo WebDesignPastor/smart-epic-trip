@@ -1,23 +1,28 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
+interface Directions {
+    origin: string
+    destination: string
+}
+
 export interface InitialState {
-    issues: string[]
+    directions: Directions[]
 }
 
 const initialState: InitialState = {
-    issues: []
+    directions: []
 }
 
-const issueSlice = createSlice({
-    name: 'issue',
+const appSlice = createSlice({
+    name: 'app',
     initialState,
     reducers: {
-        addIssue: (state, action: PayloadAction<string>) => {
-                state.issues = [...state.issues, action.payload]
+        addDirection: (state, action: PayloadAction<Directions>) => {
+                state.directions = [...state.directions, action.payload]
         }
     }
     
 })
 
-export const {addIssue} = issueSlice.actions
-export default issueSlice.reducer
+export const {addDirection} = appSlice.actions
+export default appSlice.reducer

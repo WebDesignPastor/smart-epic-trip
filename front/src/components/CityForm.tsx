@@ -1,11 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { loadGoogleMapsAPI } from '../utils/loadGoogleMapsAPI';
+import { useDispatch } from 'react-redux';
+import { addDirection } from '../slices/store';
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux';
 
 interface CityFormProps {
     onSubmit: (departure: string, arrival: string) => void;
 }
 
 const CityForm: React.FC<CityFormProps> = ({ onSubmit }) => {
+    const dispatch = useDispatch()
+    const directions = useSelector((state: RootState) => state.app.directions)
     const [departure, setDeparture] = useState('');
     const [arrival, setArrival] = useState('');
     const [submissionMessage, setSubmissionMessage] = useState('');
@@ -41,10 +47,14 @@ const CityForm: React.FC<CityFormProps> = ({ onSubmit }) => {
     }, []);
 
     const handleSubmit = (e: { preventDefault: () => void; }) => {
-        e.preventDefault();
-        onSubmit(departure, arrival);
-        setSubmissionMessage(`Vous allez de ${departure} à ${arrival}`);
+        e.preventDefault()
+        onSubmit(departure, arrival)
+        setSubmissionMessage(`Vous allez de ${departure} à ${arrival}`)
+        let destinations = {origin: departure, destination: arrival}
+        dispatch(addDirection(destinations))
     };
+
+    console.log(directions)
 
     return (
         <div className="max-w-lg mx-auto my-10 p-6 bg-white shadow-md rounded-lg">
