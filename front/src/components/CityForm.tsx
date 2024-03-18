@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import { addDirection } from '../slices/store';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux';
+import axios from 'axios';
 
 interface CityFormProps {
     onSubmit: (departure: string, arrival: string) => void;
@@ -12,9 +13,11 @@ interface CityFormProps {
 const CityForm: React.FC<CityFormProps> = ({ onSubmit }) => {
     const dispatch = useDispatch()
     const directions = useSelector((state: RootState) => state.app.directions)
-    const [departure, setDeparture] = useState('');
-    const [arrival, setArrival] = useState('');
-    const [submissionMessage, setSubmissionMessage] = useState('');
+    const apiUrl = import.meta.env.VITE_API_URL
+    const [departure, setDeparture] = useState('')
+    const [arrival, setArrival] = useState('')
+    const [submissionMessage, setSubmissionMessage] = useState('')
+    const [isLoading, setIsLoading] = useState(false)
 
     // Refs for the Autocomplete instances
     const departureAutocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
@@ -46,19 +49,22 @@ const CityForm: React.FC<CityFormProps> = ({ onSubmit }) => {
         });
     }, []);
 
-    const handleSubmit = (e: { preventDefault: () => void; }) => {
+    const handleSubmit = async (e: { preventDefault: () => void; }) => {
         e.preventDefault()
         onSubmit(departure, arrival)
         setSubmissionMessage(`Vous allez de ${departure} à ${arrival}`)
+        const departureLocationReq = await axios.get(`${apiUrl}/geocode?address=${departure}`)
+        const arrivalLocationReq = await axios.get(`${apiUrl}/geocode?address=${arrival}`)
+        const departureLocation = departureLocationReq.data.results[0].geometry.location
+        const arrivalLocation = arrivalLocationReq.data.results[0].geometry.location
+        console.log(departureLocation, arrivalLocation)
         let destinations = {origin: departure, destination: arrival}
         dispatch(addDirection(destinations))
-    };
-
-    console.log(directions)
+    }
 
     return (
         <div className="max-w-lg mx-auto my-10 p-6 bg-white shadow-md rounded-lg">
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form className="space-y-4">
                 <div>
                     <label htmlFor="departure" className="block text-sm font-medium text-gray-700">Departure City:</label>
                     <input
@@ -79,9 +85,16 @@ const CityForm: React.FC<CityFormProps> = ({ onSubmit }) => {
                         onChange={(e) => setArrival(e.target.value)}
                     />
                 </div>
-                <button type="submit" className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                    Okay let's gooo
-                </button>
+                {isLoading ?
+                    <button type="submit" className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Okay let's gooo
+                    </button>
+                    :
+                    <button onClick={handleSubmit} type="submit" className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Okay let's gooo
+                    </button>
+                }
+                
             </form>
             {submissionMessage && <div className="mt-4 p-4 bg-green-100 text-green-800 rounded-md">{submissionMessage}</div>}
         </div>

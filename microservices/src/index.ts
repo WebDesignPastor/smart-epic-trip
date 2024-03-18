@@ -3,7 +3,8 @@ import cors from "@fastify/cors"
 import {
   restaurantPlugin,
   barPlugin,
-  hotelPlugin
+  hotelPlugin,
+  geoCodingPlugin,
 } from "./router"
 
 const server = fastify()
@@ -14,6 +15,7 @@ server.register(cors, {
 server.register(restaurantPlugin)
 server.register(barPlugin)
 server.register(hotelPlugin)
+server.register(geoCodingPlugin)
 
 server.get('/ping', async (request, reply) => {
   return 'pong\n'

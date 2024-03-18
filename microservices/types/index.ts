@@ -26,12 +26,12 @@ interface Location {
 interface IGeometry {
     location: Location;
     viewport: Viewport;
-  }
+}
   
-  interface Viewport {
+interface Viewport {
     northeast: Location;
     southwest: Location;
-  }
+}
   
   interface OpeningHours {
     open_now: boolean;
@@ -76,3 +76,6 @@ interface IGeometry {
     rankby?: "prominence" | "distance"; 
   }
   
+interface GeocodeApiReqParams {
+  address?: string
+}
