@@ -121,6 +121,7 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
     const onMarkerClick = async (index: string) => {
         setIsLoading(true)
         const details = await axios.get(`${apiUrl}/details/${index}`)
+        console.log(details.data.result)
         setIsLoading(false)
         // donc besoin du place id de l'endroit
     }
