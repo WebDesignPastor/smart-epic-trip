@@ -9,6 +9,9 @@ const config = {
         },
         googleGeocode: {
             url: process.env.GOOGLE_API_GEOCODE_URL || "https://maps.googleapis.com/maps/api/geocode/json"
+        },
+        googlePlaceDetails: {
+            url: process.env.GOOGLE_API_PLACE_DETAILS_URL || "https://maps.googleapis.com/maps/api/place/details/json",
         }
     },
     options: {

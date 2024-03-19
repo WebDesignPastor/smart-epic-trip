@@ -5,6 +5,7 @@ import {
   barPlugin,
   hotelPlugin,
   geoCodingPlugin,
+  detailPlugin,
 } from "./router"
 
 const server = fastify()
@@ -16,6 +17,7 @@ server.register(restaurantPlugin)
 server.register(barPlugin)
 server.register(hotelPlugin)
 server.register(geoCodingPlugin)
+server.register(detailPlugin)
 
 server.get('/ping', async (request, reply) => {
   return 'pong\n'

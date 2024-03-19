@@ -79,3 +79,7 @@ interface Viewport {
 interface GeocodeApiReqParams {
   address?: string
 }
+
+interface PlaceDetailsRedParams {
+  place_id: string
+}
