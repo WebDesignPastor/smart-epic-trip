@@ -5,7 +5,7 @@ interface Props {
 
 const MarkerLogo: React.FC<Props> = ({color, content}) => {
 
-    const classList = `rounded-full w-5 h-5 ${color} flex justify-center items-center`
+    const classList = `rounded-full w-6 h-6 ${color} flex justify-center items-center hover:w-8 hover:h-8 hover:cursor-pointer`
 
     return (
         <div className={classList}>

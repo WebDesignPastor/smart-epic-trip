@@ -12,10 +12,17 @@ interface Directions {
 
 export interface InitialState {
     directions: Directions[]
+    tripDetails: TripDetails[]
+}
+
+export interface TripDetails {
+    origin: string
+    destination: string
 }
 
 const initialState: InitialState = {
-    directions: []
+    directions: [],
+    tripDetails: []
 }
 
 const appSlice = createSlice({
@@ -24,10 +31,13 @@ const appSlice = createSlice({
     reducers: {
         addDirection: (state, action: PayloadAction<Directions>) => {
                 state.directions = [...state.directions, action.payload]
+        },
+        setTrip: (state, action: PayloadAction<TripDetails>) => {
+            state.tripDetails = [...state.tripDetails, action.payload]
         }
     }
     
 })
 
-export const {addDirection} = appSlice.actions
+export const {addDirection, setTrip} = appSlice.actions
 export default appSlice.reducer

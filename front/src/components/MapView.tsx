@@ -6,6 +6,8 @@ import MapOptions from "./MapOptions"
 import { calculateDistance } from "../utils/distance"
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux';
+import TripDetails from "./TripDetails"
+import { useNavigate } from "react-router-dom"
 
 export interface Markers {
     id: string
@@ -31,6 +33,7 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
     const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY
     const apiUrl = import.meta.env.VITE_API_URL
     const baseDirections = useSelector((state: RootState) => state.app.directions)
+    const navigate = useNavigate()
     const defaultMapOptions = {
         fullscreenControl: false,
         streetViewControl: false,
@@ -57,13 +60,12 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
         height: height,
         margin: margin
     }
-    
 
     if(!googleMapsApiKey || !apiUrl) {
         return null
     }
 
-    const [center, setCenter] = useState({lat: 48.084328, lng: -1.68333})
+    const [center, setCenter] = useState<{lat: number, lng: number}>()
     const [directions, setDirections] = useState<google.maps.DirectionsResult | null>(null)
     const mapRef = useRef<google.maps.Map>()
     const [markers, setMarkers] = useState<Markers[]>([])
@@ -108,6 +110,7 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
     const createCustomMarker = (data: PlaceApiResResult[], type: string) => {
         let newMarkerCollection: Markers[] = markers
         data.map((res: PlaceApiResResult) => {
+            console.log(res.place_id)
             if(!newMarkerCollection.find((e:Markers) => e.id === res.place_id)) {
                 newMarkerCollection.push({lat: res.geometry.location.lat, lng: res.geometry.location.lng, id: res.place_id, type: type})
             }
@@ -159,7 +162,6 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
 
     const mapOnLoad = (map: google.maps.Map) => {
         if(map) {
-            let newCenter = {lat: mapRef.current?.getCenter()?.lat()!, lng: mapRef.current?.getCenter()?.lng()! }
             mapRef.current = map
             const bounds = map.getBounds()
             if(bounds) {
@@ -175,7 +177,7 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
                 directionsOptions.destination = baseDirections[0].destination
                 directionService.route(directionsOptions, (res, status) => {
                     if(status === 'OK') {
-                        setCenter(newCenter)
+                        setCenter(baseDirections[0].origin)
                         setDirections(res)
                     } else {
                         console.log('Error', status)
@@ -215,43 +217,78 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
         }
     }
 
+    const onZoom = () => {
+        if(mapRef != null) {
+            let newCenter = {lat: mapRef.current?.getCenter()?.lat()!, lng: mapRef.current?.getCenter()?.lng()! }
+            const bounds = mapRef.current?.getBounds()
+            if(bounds) {
+                const ne = bounds.getNorthEast()
+                const sw = bounds.getSouthWest()
+                const distance = Math.round(calculateDistance(ne.lat(), ne.lng(), sw.lat(), ne.lng()) / 2)
+                
+                setMapRadius(distance)
+            }
+            if(baseDirections[0]) {
+                directionsOptions.origin = baseDirections[0].origin
+                directionsOptions.destination = baseDirections[0].destination
+                directionService.route(directionsOptions, (res, status) => {
+                    if(status === 'OK') {
+                        setCenter(newCenter)
+                        setDirections(res)
+                    } else {
+                        console.log('Error', status)
+                    }
+                })
+            }
+        }
+    }
+
+    const onMarkerClick = () => {
+        // fetch palce details
+        // donc besoin du place id de l'endroit
+    }
+
     return (
         <>  
             <MapOptions searchHotel={searchHotel} searhBars={searhBars} searhRestaurants={searhRestaurants} 
             isLoading={isLoading} setIsLoading={setIsLoading} isHotelsSearching={isHotelsSearching} setHotelsSearching={setHotelsSearching}
             isBarsSearching={isBarsSearching} setBarsSearching={setBarsSearching} isRestaurantsSearching={isRestaurantsSearching} 
             setRestaurantsSearching={setRestaurantsSearching} setMarkers={setMarkers} markers={markers} />
-            <div className="w-full h-full">
-                {baseDirections[0] ?
-                        <GoogleMap
-                        mapContainerStyle={style}
-                        center={center}
-                        zoom={zoomDef}
-                        onLoad={(map) => mapOnLoad(map)}
-                        options={defaultMapOptions}
-                        onDragEnd={mapOnChange}
-                        onZoomChanged={mapOnChange}
-                        >
-                            {directions && <DirectionsRenderer directions={directions} options={{preserveViewport: true}}/>}
-                            {markers && markers.map((marker) => (
-                                // <Marker 
-                                //     key={marker.id}
-                                //     position={}
-                                //     label=''
-                                // />
-                                <OverlayView
-                                    position={{lat: marker.lat, lng: marker.lng}}
-                                    mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
-                                    key={marker.id}
-                                >
-                                        {renderSwitch(marker)}
-                                </OverlayView>
-                            ))}
-                        </GoogleMap>
-                    :
-                        <p>loading</p>
-                }
-                
+            <div className="w-full h-full grid grid-rows-1 grid-cols-12">
+                <div className="col-start-1 col-end-5">
+                    <TripDetails />
+                </div>
+                <div className="col-start-5 col-end-13">
+                    {baseDirections[0] ?
+                            <GoogleMap
+                            mapContainerStyle={style}
+                            center={center}
+                            zoom={zoomDef}
+                            onLoad={(map) => mapOnLoad(map)}
+                            options={defaultMapOptions}
+                            onDragEnd={mapOnChange}
+                            onZoomChanged={onZoom}
+                            >
+                                {directions && <DirectionsRenderer directions={directions} options={{preserveViewport: true}}/>}
+                                {markers && markers.map((marker) => (
+                                    // <Marker 
+                                    //     key={marker.id}
+                                    //     position={}
+                                    //     label=''
+                                    // />
+                                    <OverlayView
+                                        position={{lat: marker.lat, lng: marker.lng}}
+                                        mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+                                        key={marker.id}
+                                    >
+                                            {renderSwitch(marker)}
+                                    </OverlayView>
+                                ))}
+                            </GoogleMap>
+                        :
+                            <p>loading</p>
+                    }
+                </div>
             </div>
         </>
     )

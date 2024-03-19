@@ -76,3 +76,7 @@ interface Geometry {
     rankby?: "prominence" | "distance"; 
   }
   
+  interface TripDetailsElement {
+        content: string
+        desc?: string
+  }
