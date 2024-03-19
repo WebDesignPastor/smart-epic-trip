@@ -110,13 +110,19 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
     const createCustomMarker = (data: PlaceApiResResult[], type: string) => {
         let newMarkerCollection: Markers[] = markers
         data.map((res: PlaceApiResResult) => {
-            console.log(res.place_id)
             if(!newMarkerCollection.find((e:Markers) => e.id === res.place_id)) {
                 newMarkerCollection.push({lat: res.geometry.location.lat, lng: res.geometry.location.lng, id: res.place_id, type: type})
             }
         })
         setMarkers(newMarkerCollection)
         setIsLoading(false)
+    }
+
+    const onMarkerClick = async (index: string) => {
+        setIsLoading(true)
+        const details = await axios.get(`${apiUrl}/details/${index}`)
+        setIsLoading(false)
+        // donc besoin du place id de l'endroit
     }
 
     const searchHotel = async () => {
@@ -152,11 +158,11 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
     const renderSwitch = (marker: Markers) => {
         switch (marker.type) {
             case 'restaurant' :
-                return <MarkerLogo  color="bg-lime-400" content="R"/>
+                return <MarkerLogo  color="bg-lime-400" content="R" handler={onMarkerClick} index={marker.id}/>
             case 'hotel':
-                return <MarkerLogo  color="bg-red-400" content="H"/>
+                return <MarkerLogo  color="bg-red-400" content="H" handler={onMarkerClick} index={marker.id}/>
             case 'bars':
-                return <MarkerLogo  color="bg-blue-400" content="B"/>
+                return <MarkerLogo  color="bg-blue-400" content="B" handler={onMarkerClick} index={marker.id}/>
         }
     }
 
@@ -241,11 +247,6 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
                 })
             }
         }
-    }
-
-    const onMarkerClick = () => {
-        // fetch palce details
-        // donc besoin du place id de l'endroit
     }
 
     return (
