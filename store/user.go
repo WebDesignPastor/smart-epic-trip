@@ -1,8 +1,10 @@
 package store
 
 import (
+	"errors"
+
 	"github.com/EpitechMscProPromo2025/T-WEB-800-REN_8/model"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
 type UserStore struct {
@@ -19,7 +21,7 @@ func (us *UserStore) GetByID(id uint) (*model.User, error) {
 	var m model.User
 
 	if err := us.db.First(&m, id).Error; err != nil {
-		if gorm.IsRecordNotFoundError(err) {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
 		}
 		return nil, err
@@ -30,7 +32,7 @@ func (us *UserStore) GetByID(id uint) (*model.User, error) {
 func (us *UserStore) GetByEmail(e string) (*model.User, error) {
 	var m model.User
 	if err := us.db.Where(&model.User{Email: e}).First(&m).Error; err != nil {
-		if gorm.IsRecordNotFoundError(err) {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
 		}
 		return nil, err
@@ -43,7 +45,7 @@ func (us *UserStore) Create(u *model.User) (err error) {
 }
 
 func (us *UserStore) Update(u *model.User) error {
-	return us.db.Model(u).Update(u).Error
+	return us.db.Model(u).Updates(u).Error
 }
 
 func (us *UserStore) Delete(u *model.User) error {

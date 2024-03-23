@@ -4,15 +4,15 @@ import (
 	"fmt"
 
 	"github.com/EpitechMscProPromo2025/T-WEB-800-REN_8/model"
-	"github.com/jinzhu/gorm"
+	"github.com/glebarez/sqlite"
+	"gorm.io/gorm"
 )
 
 func New() *gorm.DB {
-	db, err := gorm.Open("sqlite3", "./golang-web.db")
+	db, err := gorm.Open(sqlite.Open("golang-web.db"), &gorm.Config{})
 	if err != nil {
 		fmt.Println("storage err: ", err)
 	}
-	db.LogMode(true)
 	return db
 }
 

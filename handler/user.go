@@ -2,8 +2,10 @@ package handler
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/EpitechMscProPromo2025/T-WEB-800-REN_8/model"
+	"github.com/EpitechMscProPromo2025/T-WEB-800-REN_8/utils"
 	"github.com/labstack/echo/v4"
 )
 
@@ -35,6 +37,20 @@ func (h *Handler) Login(c echo.Context) error {
 }
 
 func (h *Handler) UpdateUser(c echo.Context) error {
+	p := c.QueryParam("id")
+
+	id, err := strconv.Atoi(p)
+	if err != nil {
+		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
+	}
+
+	u, err := h.userStore.GetByID(uint(id))
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+	}
+	if u == nil {
+		return c.JSON(http.StatusForbidden, utils.AccessForbidden())
+	}
 
 	req := newUserUpdateRequest()
 	req.populate(u)
@@ -45,4 +61,28 @@ func (h *Handler) UpdateUser(c echo.Context) error {
 		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
 	}
 	return c.JSON(http.StatusOK, newUserResponse(u))
+}
+
+func (h *Handler) DeleteUser(c echo.Context) error {
+	p := c.QueryParam("id")
+
+	id, err := strconv.Atoi(p)
+	if err != nil {
+		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
+	}
+
+	u, err := h.userStore.GetByID(uint(id))
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+	}
+	if u == nil {
+		return c.JSON(http.StatusForbidden, utils.AccessForbidden())
+	}
+
+	if err := h.userStore.Delete(u); err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.AccessForbidden())
+	}
+
+	return c.NoContent(http.StatusNoContent)
+
 }
