@@ -1,0 +1,1 @@
+export const noApiKey = {status: 500, message: "No API key"}
