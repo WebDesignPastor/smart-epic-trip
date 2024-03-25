@@ -34,7 +34,7 @@ const CityForm: React.FC<CityFormProps> = ({ onSubmit }) => {
                     const place = departureAutocompleteRef.current?.getPlace();
                     if (place && place.address_components) {
                         setDeparture(place.formatted_address!);
-                    }
+                    }                   
                 });
 
                 // Attach event listener for arrival autocomplete
@@ -42,7 +42,7 @@ const CityForm: React.FC<CityFormProps> = ({ onSubmit }) => {
                     const place = arrivalAutocompleteRef.current?.getPlace();
                     if (place && place.address_components) {
                         setArrival(place.formatted_address!);
-                    }
+                    }                  
                 });
             }
         });
@@ -88,16 +88,9 @@ const CityForm: React.FC<CityFormProps> = ({ onSubmit }) => {
                         onChange={(e) => setArrival(e.target.value)}
                     />
                 </div>
-                {isLoading ?
-                    <button type="submit" className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                        Okay let's gooo
-                    </button>
-                    :
-                    <button onClick={handleSubmit} type="submit" className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                        Okay let's gooo
-                    </button>
-                }
-                
+                <button onClick={handleSubmit} type="submit" className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    Okay let's gooo
+                </button>   
             </form>
             {submissionMessage && <div className="mt-4 p-4 bg-green-100 text-green-800 rounded-md">{submissionMessage}</div>}
         </div>
