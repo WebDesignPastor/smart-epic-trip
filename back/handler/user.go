@@ -9,6 +9,19 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+func (h *Handler) GetAll(c echo.Context) error {
+	var userResponses []model.User
+
+	users, err := h.userStore.GetAll()
+	if err != nil {
+		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
+	}
+	for _, user := range users {
+		userResponses = append(userResponses, user)
+	}
+	return c.JSON(http.StatusOK, userResponses)
+}
+
 func (h *Handler) SignUp(c echo.Context) error {
 	var u model.User
 	req := &userRegisterRequest{}

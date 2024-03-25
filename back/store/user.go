@@ -40,6 +40,17 @@ func (us *UserStore) GetByEmail(e string) (*model.User, error) {
 	return &m, nil
 }
 
+func (us *UserStore) GetAll() ([]model.User, error) {
+	var users []model.User
+	//var result []model.User
+
+	result := us.db.Find(&users)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return users, nil
+}
+
 func (us *UserStore) Create(u *model.User) (err error) {
 	return us.db.Create(u).Error
 }
