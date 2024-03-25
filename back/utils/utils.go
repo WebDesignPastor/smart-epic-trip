@@ -1,5 +1,3 @@
-// In your 'utils' or 'security' package
-
 package utils
 
 import (
