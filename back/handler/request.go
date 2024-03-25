@@ -57,6 +57,12 @@ func (r *userRegisterRequest) bind(c echo.Context, u *model.User) error {
 	u.Email = r.User.Email
 	u.Password = r.User.Password
 
+	hashedPassword, err := u.HashPassword(r.User.Password)
+	if err != nil {
+		return err
+	}
+	u.Password = hashedPassword
+
 	return nil
 }
 
