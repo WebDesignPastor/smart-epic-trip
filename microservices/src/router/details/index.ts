@@ -6,7 +6,6 @@ export const detailPlugin = async (fastify: FastifyInstance) => {
     fastify.get(
         "/details/:place_id",
         async (request: FastifyRequest, reply: FastifyReply) => {
-            console.log(request)
             try {
                 const params = request.params as PlaceDetailsRedParams
                 
