@@ -7,5 +7,5 @@ func (h *Handler) Register(v1 *echo.Group) {
 	u.GET("", h.GetAll)
 	u.POST("", h.SignUp)
 	u.POST("/login", h.Login)
-	u.PUT("", h.UpdateUser)
+	u.PUT("/:id", h.UpdateUser)
 }
