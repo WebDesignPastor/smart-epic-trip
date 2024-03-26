@@ -1,6 +1,6 @@
 import { DirectionsRenderer, GoogleMap, OverlayView, useJsApiLoader } from "@react-google-maps/api"
 import React, { useEffect, useRef, useState } from "react"
-import axios from "axios"
+import axios, { all } from "axios"
 import MarkerLogo from "./MarkerLogo"
 import MapOptions from "./MapOptions"
 import { calculateDistance } from "../utils/distance"
@@ -9,6 +9,8 @@ import { RootState } from '../redux';
 import TripDetails from "./TripDetails"
 import { useNavigate } from "react-router-dom"
 import PlaceDetails from "./PlaceDetails"
+import { useDispatch } from "react-redux"
+import { addWaypoint, setDestination, setOrigin } from "../slices/store"
 
 export interface Markers {
     id: string
@@ -33,7 +35,8 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
 
     const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY
     const apiUrl = import.meta.env.VITE_API_URL
-    const baseDirections = useSelector((state: RootState) => state.app.directions)
+    const directionsOptions = useSelector((state: RootState) => state.app.directionsOptions)
+    const dispatch = useDispatch()
     const navigate = useNavigate()
     const defaultMapOptions = {
         fullscreenControl: false,
@@ -77,6 +80,7 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
     const [isRestaurantsSearching, setRestaurantsSearching] = useState(false)
     const [placeDetails, setPlaceDetails] = useState<PlaceDetail>()
     const [isShowingDetails, setIsShowingDetails] = useState(false)
+    const [isRouteUpdating, setRouteUpdating] = useState(false)
     
     const { isLoaded } = useJsApiLoader({ googleMapsApiKey })
 
@@ -86,29 +90,6 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
 
     // set the route 
     const directionService = new google.maps.DirectionsService()
-    let origin: google.maps.LatLngLiteral = {lat: 48.084328, lng: -1.68333}
-    let destination: google.maps.LatLngLiteral = { lat: 47.750000, lng: -3.3666700 }
-    let waypoints: Waypoint[] = [
-        { location: { lat: 47.666672, lng: -2.750000 }, stopover: true },
-        { location: { lat: 47.766670, lng: -3.116670 }, stopover: true }
-    ]
-    let directionsOptions: google.maps.DirectionsRequest = {
-        origin: origin,
-        destination: destination,
-        // waypoints: waypoints,
-        travelMode: 'DRIVING' as google.maps.TravelMode,
-        avoidHighways: false
-    }
-    // const createMarker = (lat: number, lng: number, id: string, centerCoord: any) => {
-    //     if(centerCoord) {
-    //         const newMarker = {
-    //             id: id,
-    //             lat: lat,
-    //             lng: lng
-    //         }
-    //         setMarkers([...markers, newMarker])
-    //     }
-    // }
 
     const createCustomMarker = (data: PlaceApiResResult[], type: string) => {
         let newMarkerCollection: Markers[] = markers
@@ -172,8 +153,26 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
         }
     }
 
+    const calculateDirections = (options: any, center: any) => {
+        setRouteUpdating(true)
+        directionService.route(options, (res, status) => {
+            if(status === 'OK') {
+                setCenter(center)
+                setDirections(res)
+                setRouteUpdating(false)
+            } else {
+                console.log('Error', status)
+            }
+        })
+    }
+
+    const clearRoute = () => {
+        setDirections(null)
+    }
+
     const mapOnLoad = (map: google.maps.Map) => {
         if(map) {
+            clearRoute()
             mapRef.current = map
             const bounds = map.getBounds()
             if(bounds) {
@@ -184,23 +183,15 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
 
                 setMapRadius(distance)
             }
-            if(baseDirections[0]) {
-                directionsOptions.origin = baseDirections[0].origin
-                directionsOptions.destination = baseDirections[0].destination
-                directionService.route(directionsOptions, (res, status) => {
-                    if(status === 'OK') {
-                        setCenter(baseDirections[0].origin)
-                        setDirections(res)
-                    } else {
-                        console.log('Error', status)
-                    }
-                })
+            if(directionsOptions) {
+                calculateDirections(directionsOptions, directionsOptions.origin)
             }
         }
     }
 
     const mapOnChange = () => {
         if(mapRef != null) {
+            clearRoute()
             setIsShowingDetails(false)
             let newCenter = {lat: mapRef.current?.getCenter()?.lat()!, lng: mapRef.current?.getCenter()?.lng()! }
             const bounds = mapRef.current?.getBounds()
@@ -215,23 +206,15 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
                 setHotelsSearching(false)
                 setRestaurantsSearching(false)
             }
-            if(baseDirections[0]) {
-                directionsOptions.origin = baseDirections[0].origin
-                directionsOptions.destination = baseDirections[0].destination
-                directionService.route(directionsOptions, (res, status) => {
-                    if(status === 'OK') {
-                        setCenter(newCenter)
-                        setDirections(res)
-                    } else {
-                        console.log('Error', status)
-                    }
-                })
+            if(directionsOptions) {
+                calculateDirections(directionsOptions, newCenter)
             }
         }
     }
 
     const onZoom = () => {
         if(mapRef != null) {
+            clearRoute()
             let newCenter = {lat: mapRef.current?.getCenter()?.lat()!, lng: mapRef.current?.getCenter()?.lng()! }
             const bounds = mapRef.current?.getBounds()
             if(bounds) {
@@ -241,18 +224,23 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
                 
                 setMapRadius(distance)
             }
-            if(baseDirections[0]) {
-                directionsOptions.origin = baseDirections[0].origin
-                directionsOptions.destination = baseDirections[0].destination
-                directionService.route(directionsOptions, (res, status) => {
-                    if(status === 'OK') {
-                        setCenter(newCenter)
-                        setDirections(res)
-                    } else {
-                        console.log('Error', status)
-                    }
-                })
+            if(directionsOptions) {
+                calculateDirections(directionsOptions, newCenter)
             }
+        }
+    }
+
+    const addWaypoints = (item: PlaceDetail) => {
+        if(directionsOptions) {
+            clearRoute()
+            let newWaypoint = {
+                location: {lat: item.geometry.location.lat, lng: item.geometry.location.lng}, stopover: true
+            }
+            let currentDirectionsOptions = JSON.parse(JSON.stringify(directionsOptions))
+            currentDirectionsOptions.waypoints!.push(newWaypoint)
+            dispatch(addWaypoint(newWaypoint))
+            calculateDirections(currentDirectionsOptions, center)
+            setIsShowingDetails(false)
         }
     }
 
@@ -265,13 +253,13 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
             <div className="w-full h-full grid grid-rows-1 grid-cols-12">
                 <div className="col-start-1 col-end-5">
                     {isShowingDetails ?
-                        <PlaceDetails content={placeDetails!} />
+                        <PlaceDetails content={placeDetails!} setIsShowingDetails={setIsShowingDetails} addWaypoints={addWaypoints} />
                     :
                         <TripDetails />
                     }
                 </div>
                 <div className="col-start-5 col-end-13">
-                    {baseDirections[0] ?
+                    {directionsOptions ?
                             <GoogleMap
                             mapContainerStyle={style}
                             center={center}
@@ -280,8 +268,8 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
                             options={defaultMapOptions}
                             onDragEnd={mapOnChange}
                             onZoomChanged={onZoom}
-                            >
-                                {directions && <DirectionsRenderer directions={directions} options={{preserveViewport: true}}/>}
+                            >   
+                                {directions && !isRouteUpdating && <DirectionsRenderer directions={directions} options={{preserveViewport: true}}/>}
                                 {markers && markers.map((marker) => (
                                     // <Marker 
                                     //     key={marker.id}

@@ -29,3 +29,4 @@ services:
       - ./microservices/.env
     ports:
       - "8001:8001"
+    tty: true

@@ -5,14 +5,9 @@ interface Location {
     lng: number
 }
 
-interface Directions {
-    origin: Location
-    destination: Location
-}
-
 export interface InitialState {
-    directions: Directions[]
     tripDetails: TripDetails[]
+    directionsOptions: DirectionsOptions
 }
 
 export interface TripDetails {
@@ -20,24 +15,61 @@ export interface TripDetails {
     destination: string
 }
 
+export interface Waypoints {
+    location: Location
+    stopover: boolean
+}
+
+export interface DirectionsOptions {
+    origin: google.maps.LatLngLiteral
+    destination: google.maps.LatLngLiteral
+    travelMode: google.maps.TravelMode
+    avoidHighways: boolean
+    waypoints?: Waypoints[]
+}
+
 const initialState: InitialState = {
-    directions: [],
-    tripDetails: []
+    tripDetails: [],
+    directionsOptions: {
+        origin: {lat: 48.084328, lng: -1.68333},
+        destination: { lat: 47.750000, lng: -3.3666700 },
+        travelMode: 'DRIVING' as google.maps.TravelMode,
+        avoidHighways: false,
+        waypoints: []
+    }
 }
 
 const appSlice = createSlice({
     name: 'app',
     initialState,
     reducers: {
-        addDirection: (state, action: PayloadAction<Directions>) => {
-                state.directions = [...state.directions, action.payload]
-        },
         setTrip: (state, action: PayloadAction<TripDetails>) => {
             state.tripDetails = [...state.tripDetails, action.payload]
+        },
+        setOrigin: (state, action: PayloadAction<Location>) => {
+            return {
+                ...state,
+                directionsOptions: {
+                    ...state.directionsOptions,
+                    origin: action.payload
+                }
+            }
+        },
+        setDestination: (state, action: PayloadAction<Location>) => {
+            return {
+                ...state,
+                directionsOptions: {
+                    ...state.directionsOptions,
+                    destination: action.payload
+                }
+            }
+        },
+        addWaypoint: (state, action: PayloadAction<Waypoints>) => {
+            state.directionsOptions.waypoints?.push(action.payload)
         }
     }
     
 })
 
-export const {addDirection, setTrip} = appSlice.actions
+export const {setTrip, setOrigin, setDestination, addWaypoint} = appSlice.actions
 export default appSlice.reducer
