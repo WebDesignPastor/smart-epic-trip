@@ -44,36 +44,46 @@ const PlaceDetails: React.FC<Props> = ({content, setIsShowingDetails, addWaypoin
 
     return (
         <div className="h-full w-full bg-neutral-700 flex flex-col items-center px-3">
-            <div className="w-full bg-gray-100 min-h-16 flex justify-center items-center flex-col rounded-lg mb-4 relative">
+            <div className="w-full bg-gray-100 min-h-16 flex justify-center items-center flex-col rounded-lg mb-4 relative md:w-auto">
                 <div className="absolute top-0 right-0 mt-1 mr-1">
-                        <button onClick={handleCloseBtn} type="button" className="bg-white rounded-md p-2 inline-flex items-center justify-center text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500">
+                    <button onClick={handleCloseBtn} type="button" className="bg-white rounded-md p-2 inline-flex items-center justify-center text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500">
                         <span className="sr-only">Close menu</span>
-                        <svg className="h-3 w-3 " xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        <svg className="h-3 w-3 flex flex-row" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                         </svg>
                     </button>
                 </div>
-                {content.photos &&
-                    <div className="object-cover mt-5 mb-3 max-h-40">
-                        <img src={photo} className="px-2 max-h-40"/>
-                    </div>
-                }
-                <div className={classList}>
-                    <h2 className="m-0 pb-2">{content.name}</h2>
-                    <p className="pb-2">{fullAddress}</p>
-                    <p className="pb-2">{content.international_phone_number}</p>
-                    {content.rating &&
-                        <p className="flex items-center">
-                            {content.rating}
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" className="ml-1">
-                                <path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z"/>
-                            </svg>
-                        </p>
+
+
+
+                <div className="max-w-sm rounded overflow-hidden shadow-lg">
+                    {content.photos &&
+                        <img src={photo} className="w-full"/>
                     }
+                    <div className="px-6 py-4 relative">
+                        <div className="flex flex-row justify-between">
+                            <div className="font-bold text-xl mb-2">{content.name}</div>
+                            {content.rating &&
+                                <p className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2 flex h-8">
+                                    {content.rating}
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" className="ml-1">
+                                        <path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z"/>
+                                    </svg>
+                                </p>
+                            }
+                        </div>
+                        <p className="text-gray-700 text-base"><strong className="text-black">Adresse: </strong>{fullAddress}</p>
+                        <a href={`tel:${content.international_phone_number}`}><strong>Tel: </strong>{content.international_phone_number}</a>
+                    </div>
+                    <div className="flex justify-center items-center mb-4 ">
+                        <button onClick={() => HandleAddBtn(content)} className="bg-[#86A873] hover:bg-gray-100 duration-300 transition-duration: 300ms text-gray-800 font-semibold py-2 px-4 border rounded-full shadow w-[90%]">Ajouter au trip</button>
+                    </div>
                 </div>
-                <div className="flex justify-center items-center mb-4">
-                    <button onClick={() => HandleAddBtn(content)} className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border rounded shadow">Ajouter au trip</button>
-                </div>
+
+
+
+
+
             </div>
         </div>
     )
