@@ -46,18 +46,19 @@ func (h *Handler) GetTrip(c echo.Context) error {
 // CreateTrip handles POST request to create a new trip
 func (h *Handler) CreateTrip(c echo.Context) error {
 	// Parse request body to extract trip data
-	var trip model.Trip
-	if err := c.Bind(&trip); err != nil {
+	var t model.Trip
+	req := &newTripRequest{}
+	if err := req.bind(c, &t); err != nil {
 		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
 	}
 
 	// Create the trip in the database
-	if err := h.tripStore.Create(&trip); err != nil {
+	if err := h.tripStore.Create(&t); err != nil {
 		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
 	}
 
 	// Return the created trip as JSON response
-	return c.JSON(http.StatusCreated, trip)
+	return c.JSON(http.StatusCreated, t)
 }
 
 // UpdateTrip handles PUT request to update an existing trip

@@ -10,6 +10,13 @@ type userResponse struct {
 	} `json:"user"`
 }
 
+type tripResponse struct {
+	Trip struct {
+		departure string `json:"departure"`
+		arrival   string `json:"arrival"`
+	} `json:"trip"`
+}
+
 func newUserResponse(u *model.User) *userResponse {
 	r := new(userResponse)
 	r.User.Username = u.Username

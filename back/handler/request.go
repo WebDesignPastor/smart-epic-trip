@@ -45,6 +45,27 @@ type userRegisterRequest struct {
 	} `json:"user"`
 }
 
+type newTripRequest struct {
+	Trip struct {
+		Departure string `json:"departure" validate:"required"`
+		Arrival   string `json:"arrival" validate:"required"`
+	} `json:"trip"`
+}
+
+func (r *newTripRequest) bind(c echo.Context, t *model.Trip) error {
+	if err := c.Bind(r); err != nil {
+		return err
+	}
+	if err := c.Validate(r); err != nil {
+		return err
+	}
+
+	t.Departure = r.Trip.Departure
+	t.Arrival = r.Trip.Arrival
+
+	return nil
+}
+
 func (r *userRegisterRequest) bind(c echo.Context, u *model.User) error {
 	if err := c.Bind(r); err != nil {
 		return err
