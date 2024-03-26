@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { loadGoogleMapsAPI } from '../utils/loadGoogleMapsAPI';
 import { useDispatch } from 'react-redux';
-import { addDirection } from '../slices/store';
+import { setDestination, setOrigin, setTrip } from '../slices/store';
 import axios from 'axios';
 import { useNavigate } from "react-router-dom"
 
@@ -58,8 +58,9 @@ const CityForm: React.FC<CityFormProps> = ({ onSubmit }) => {
             const arrivalLocationReq = await axios.get(`${apiUrl}/geocode?address=${arrival}`)
             const departureLocation = departureLocationReq.data.results[0].geometry.location
             const arrivalLocation = arrivalLocationReq.data.results[0].geometry.location
-            let destinations = {origin: departureLocation, destination: arrivalLocation}
-            dispatch(addDirection(destinations))
+            dispatch(setOrigin(departureLocation))
+            dispatch(setDestination(arrivalLocation))
+            dispatch(setTrip({origin: departure, destination: arrival}))
             setIsLoading(!isLoading)
             navigate('/map')
         }
