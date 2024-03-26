@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React from "react"
 import { Markers } from "./MapView"
 import { checkIfArrayHasValue, sortArrayByPropertyType } from "../utils/array"
 
