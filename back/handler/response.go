@@ -1,6 +1,8 @@
 package handler
 
-import "github.com/EpitechMscProPromo2025/T-WEB-800-REN_8/model"
+import (
+	"github.com/EpitechMscProPromo2025/T-WEB-800-REN_8/model"
+)
 
 type userResponse struct {
 	User struct {
@@ -8,6 +10,7 @@ type userResponse struct {
 		Email    string `json:"email"`
 		Password string `json:"password"`
 	} `json:"user"`
+	Token string `json:"token"`
 }
 
 type tripResponse struct {
@@ -30,7 +33,16 @@ type placeResponse struct {
 	} `json:"place"`
 }
 
-func newUserResponse(u *model.User) *userResponse {
+func newUserResponse(u *model.User, token string) *userResponse {
+	r := new(userResponse)
+	r.User.Username = u.Username
+	r.User.Email = u.Email
+	r.User.Password = u.Password
+	r.Token = token
+	return r
+}
+
+func updateUserResponse(u *model.User) *userResponse {
 	r := new(userResponse)
 	r.User.Username = u.Username
 	r.User.Email = u.Email
