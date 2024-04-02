@@ -1,11 +1,11 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 
 	"github.com/EpitechMscProPromo2025/T-WEB-800-REN_8/model"
+	"github.com/EpitechMscProPromo2025/T-WEB-800-REN_8/router/middleware"
 	"github.com/EpitechMscProPromo2025/T-WEB-800-REN_8/utils"
 	"github.com/labstack/echo/v4"
 )
@@ -20,6 +20,7 @@ func (h *Handler) GetAll(c echo.Context) error {
 	for _, user := range users {
 		userResponses = append(userResponses, user)
 	}
+
 	return c.JSON(http.StatusOK, userResponses)
 }
 
@@ -33,7 +34,13 @@ func (h *Handler) SignUp(c echo.Context) error {
 	if err := h.userStore.Create(&u); err != nil {
 		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
 	}
-	return c.JSON(http.StatusCreated, newUserResponse(&u))
+
+	t, err := middleware.CreateJwt(int(u.ID))
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+	}
+
+	return c.JSON(http.StatusCreated, newUserResponse(&u, t))
 }
 
 func (h *Handler) Login(c echo.Context) error {
@@ -48,18 +55,29 @@ func (h *Handler) Login(c echo.Context) error {
 	if u == nil {
 		return c.JSON(http.StatusForbidden, utils.AccessForbidden())
 	}
-	return c.JSON(http.StatusOK, newUserResponse(u))
+
+	t, err := middleware.CreateJwt(int(u.ID))
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+	}
+
+	return c.JSON(http.StatusOK, newUserResponse(u, t))
 }
 
 func (h *Handler) UpdateUser(c echo.Context) error {
-	// Parse user ID from route parameter
-	p := c.Param("id")
+	p := c.Param("id") // get id from request param
 	id, err := strconv.Atoi(p)
 	if err != nil {
 		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
 	}
+	jwt_id, err := middleware.ExtractId(c) // get id from jwt
+	if err != nil {
+		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
+	}
 
-	fmt.Println(p)
+	if jwt_id != id { // check if jwt_id different from param id
+		return c.JSON(http.StatusForbidden, utils.AccessForbidden())
+	}
 
 	// Retrieve user by ID from the database
 	u, err := h.userStore.GetByID(uint(id))
@@ -69,7 +87,6 @@ func (h *Handler) UpdateUser(c echo.Context) error {
 	if u == nil {
 		return c.JSON(http.StatusNotFound, utils.NotFound())
 	}
-	fmt.Println(u)
 
 	// Bind request body to update user data
 	req := newUserUpdateRequest()
@@ -93,15 +110,24 @@ func (h *Handler) UpdateUser(c echo.Context) error {
 	if err := h.userStore.Update(u); err != nil {
 		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
 	}
-	return c.JSON(http.StatusOK, newUserResponse(u))
+	return c.JSON(http.StatusOK, updateUserResponse(u))
 }
 
 func (h *Handler) DeleteUser(c echo.Context) error {
-	p := c.QueryParam("id")
 
+	p := c.QueryParam("id")
 	id, err := strconv.Atoi(p)
 	if err != nil {
 		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
+	}
+
+	jwt_id, err := middleware.ExtractId(c) // get id from jwt
+	if err != nil {
+		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
+	}
+
+	if jwt_id != id { // check if jwt_id different from param id
+		return c.JSON(http.StatusForbidden, utils.AccessForbidden())
 	}
 
 	u, err := h.userStore.GetByID(uint(id))
