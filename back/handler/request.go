@@ -49,6 +49,7 @@ type newTripRequest struct {
 	Trip struct {
 		Departure string `json:"departure" validate:"required"`
 		Arrival   string `json:"arrival" validate:"required"`
+		UserID    uint   `json:"user_id" validate:"required"`
 	} `json:"trip"`
 }
 
@@ -62,6 +63,7 @@ func (r *newTripRequest) bind(c echo.Context, t *model.Trip) error {
 
 	t.Departure = r.Trip.Departure
 	t.Arrival = r.Trip.Arrival
+	t.UserID = r.Trip.UserID
 
 	return nil
 }
