@@ -22,6 +22,14 @@ type tripResponse struct {
 	} `json:"trip"`
 }
 
+type placeResponse struct {
+	Place struct {
+		Name      string `json:"name"`
+		Longitude string `json:"longitude"`
+		Latitude  string `json:"latitude"`
+	} `json:"place"`
+}
+
 func newUserResponse(u *model.User) *userResponse {
 	r := new(userResponse)
 	r.User.Username = u.Username
@@ -37,5 +45,13 @@ func newTripResponse(t *model.Trip) *tripResponse {
 	r.Trip.UserID = t.User.ID
 	r.Trip.User.Username = t.User.Username
 	r.Trip.User.Email = t.User.Email
+	return r
+}
+
+func newPlaceResponse(p *model.Place) *placeResponse {
+	r := new(placeResponse)
+	r.Place.Name = p.Name
+	r.Place.Longitude = p.Longitude
+	r.Place.Latitude = p.Latitude
 	return r
 }

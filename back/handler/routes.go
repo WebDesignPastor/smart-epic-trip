@@ -9,7 +9,6 @@ func (h *Handler) Register(v1 *echo.Group) {
 	u.POST("", h.SignUp)
 	u.POST("/login", h.Login)
 	u.PUT("/:id", h.UpdateUser)
-<<<<<<< HEAD
 
 	// Trip routes
 	t := v1.Group("/trips")
@@ -18,6 +17,8 @@ func (h *Handler) Register(v1 *echo.Group) {
 	t.POST("", h.CreateTrip)
 	t.PUT("/:id", h.UpdateTrip)
 	t.DELETE("/:id", h.DeleteTrip)
-=======
->>>>>>> 3c02e375d908fbdfd69176e9559052ee4be01d58
+
+	// Place routes
+	p := v1.Group("/places")
+	p.POST("", h.CreatePlace)
 }

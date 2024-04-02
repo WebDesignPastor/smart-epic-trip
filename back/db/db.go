@@ -19,5 +19,6 @@ func AutoMigrate(db *gorm.DB) {
 	db.AutoMigrate(
 		&model.User{},
 		&model.Trip{},
+		&model.Place{},
 	)
 }
