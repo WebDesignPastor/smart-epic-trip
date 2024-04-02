@@ -8,4 +8,5 @@ type Store interface {
 	Create(*model.User) error
 	Update(*model.User) error
 	Delete(*model.User) error
+	GetAll() ([]model.User, error)
 }
