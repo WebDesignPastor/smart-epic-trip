@@ -12,8 +12,13 @@ type userResponse struct {
 
 type tripResponse struct {
 	Trip struct {
-		departure string `json:"departure"`
-		arrival   string `json:"arrival"`
+		Departure string `json:"departure"`
+		Arrival   string `json:"arrival"`
+		UserID    uint   `json:"userID"`
+		User      struct {
+			Username string `json:"username"`
+			Email    string `json:"email"`
+		} `json:"user"`
 	} `json:"trip"`
 }
 
@@ -22,5 +27,15 @@ func newUserResponse(u *model.User) *userResponse {
 	r.User.Username = u.Username
 	r.User.Email = u.Email
 	r.User.Password = u.Password
+	return r
+}
+
+func newTripResponse(t *model.Trip) *tripResponse {
+	r := new(tripResponse)
+	r.Trip.Departure = t.Departure
+	r.Trip.Arrival = t.Arrival
+	r.Trip.UserID = t.User.ID
+	r.Trip.User.Username = t.User.Username
+	r.Trip.User.Email = t.User.Email
 	return r
 }

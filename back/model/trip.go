@@ -6,8 +6,8 @@ import (
 
 type Trip struct {
 	gorm.Model
-	Departure string `gorm:"uniqueIndex"`
-	Arrival   string `gorm:"uniqueIndex"`
+	Departure string
+	Arrival   string
 	UserID    uint
 	User      User `gorm:"foreignKey:UserID"`
 }
