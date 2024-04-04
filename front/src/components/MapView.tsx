@@ -73,6 +73,7 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
     const [isRestaurantsSearching, setRestaurantsSearching] = useState(false)
     const [placeDetails, setPlaceDetails] = useState<PlaceDetail>()
     const [isShowingDetails, setIsShowingDetails] = useState(false)
+    const [waypointsDetails, setWaypointsDetails] = useState<any>([])
     
     const { isLoaded } = useJsApiLoader({ googleMapsApiKey })
 
@@ -216,11 +217,24 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
     const addWaypoints = (item: PlaceDetail) => {
         if(directionsOptions) {
             let newWaypoint = {
-                location: {lat: item.geometry.location.lat, lng: item.geometry.location.lng}, stopover: true
+                place_id: item.place_id,
+                dir: {
+                    location: {lat: item.geometry.location.lat, lng: item.geometry.location.lng}, stopover: true
+                }
             }
             let currentDirectionsOptions = JSON.parse(JSON.stringify(directionsOptions))
-            currentDirectionsOptions.waypoints!.push(newWaypoint)
-            dispatch(addWaypoint(newWaypoint))
+            let waypointDetails = {
+                name: item.name,
+                address_components: item?.address_components,
+                photos: item?.photos,
+                phone_number: item?.international_phone_number,
+                rating: item?.rating,
+                place_id: item.place_id
+            }
+            let newWaypointCollection = [...waypointsDetails, waypointDetails]
+            setWaypointsDetails(newWaypointCollection)
+            currentDirectionsOptions.waypoints!.push(newWaypoint.dir)
+            dispatch(addWaypoint(newWaypoint.dir))
             calculateDirections(currentDirectionsOptions, center)
             setIsShowingDetails(false)
         }
@@ -232,12 +246,12 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
             isLoading={isLoading} setIsLoading={setIsLoading} isHotelsSearching={isHotelsSearching} setHotelsSearching={setHotelsSearching}
             isBarsSearching={isBarsSearching} setBarsSearching={setBarsSearching} isRestaurantsSearching={isRestaurantsSearching} 
             setRestaurantsSearching={setRestaurantsSearching} setMarkers={setMarkers} markers={markers} />
-            <div className="w-full h-full grid grid-rows-1 grid-cols-12">
+            <div className="w-full h-full grid grid-rows-1 grid-cols-12 overflow-hidden">
                 <div className="col-start-1 col-end-5">
                     {isShowingDetails ?
                         <PlaceDetails content={placeDetails!} setIsShowingDetails={setIsShowingDetails} addWaypoints={addWaypoints} />
                     :
-                        <TripDetails />
+                        <TripDetails waypointsDetails={waypointsDetails} />
                     }
                 </div>
                 <div className="col-start-5 col-end-13">

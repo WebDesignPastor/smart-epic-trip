@@ -74,7 +74,7 @@ const MapOptions: React.FC<Props> = ({
     }
 
     return (
-        <nav className="relative flex w-full h-20 flex-nowrap items-center justify-center bg-neutral-700 py-2 shadow-dark-mild">
+        <nav className="relative flex w-full flex-nowrap items-center justify-center bg-neutral-700 py-2 shadow-dark-mild">
             <div>
                 {/* logo */}
             </div>
