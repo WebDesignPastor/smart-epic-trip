@@ -241,6 +241,8 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
         }
     }
 
+    console.log(directionsOptions)
+
     return (
         <>  
             <MapOptions searchHotel={searchHotel} searhBars={searhBars} searhRestaurants={searhRestaurants} 
