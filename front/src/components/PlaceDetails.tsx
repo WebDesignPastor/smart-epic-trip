@@ -58,7 +58,7 @@ const PlaceDetails: React.FC<Props> = ({content, setIsShowingDetails, addWaypoin
 
                 <div className="max-w-sm rounded overflow-hidden shadow-lg">
                     {content.photos &&
-                        <img src={photo} className="w-full"/>
+                        <img src={photo} className="w-full h-72 object-center object-cover"/>
                     }
                     <div className="px-6 py-4 relative">
                         <div className="flex flex-row justify-between">
