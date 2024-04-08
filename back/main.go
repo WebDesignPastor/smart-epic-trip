@@ -23,5 +23,6 @@ func main() {
 	h := handler.NewHandler(us, ts, ps)
 	h.Register(g)
 
+	//e.Logger.Fatal(e.StartAutoTLS(":8080"))
 	e.Logger.Fatal(e.Start(":8080"))
 }
