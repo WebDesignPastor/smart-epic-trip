@@ -9,4 +9,5 @@ type Place struct {
 	Name      string `gorm:"uniqueIndex;not null"`
 	Latitude  string `gorm:"uniqueIndex;not null"`
 	Longitude string `gorm:"uniqueIndex;not null"`
+	Trips     []Trip `gorm:"many2many:places_trips;"`
 }
