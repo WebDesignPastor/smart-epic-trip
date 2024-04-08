@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import bcrypt from 'bcryptjs';
 
 const LoginForm: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -7,10 +8,13 @@ const LoginForm: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    const hashedPassword = bcrypt.hashSync(password, 10);
+
+
     const userData = {
       user: {
         email,
-        password
+        password: hashedPassword
       }
     };
 
