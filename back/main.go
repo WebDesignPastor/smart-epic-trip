@@ -18,7 +18,9 @@ func main() {
 
 	//return address of created struct userstore / called with db as parameter
 	us := store.NewUserStore(d)
-	h := handler.NewHandler(us)
+	ts := store.NewTripStore(d)
+	ps := store.NewPlaceStore(d)
+	h := handler.NewHandler(us, ts, ps)
 	h.Register(g)
 
 	e.Logger.Fatal(e.Start(":8080"))

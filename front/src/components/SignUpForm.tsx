@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from "react-router-dom";
+import bcrypt from 'bcryptjs';
+import Login from '../pages/Login';
+
 
 const SignUpForm: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -10,11 +13,14 @@ const SignUpForm: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    const hashedPassword = bcrypt.hashSync(password, 10);
+
+
     const userData = {
       user: {
         email,
         username,
-        password
+        password: hashedPassword
       }
     };
 
@@ -29,6 +35,8 @@ const SignUpForm: React.FC = () => {
 
       if (response.ok) {
         console.log('Inscription réussie !');
+        console.log(userData);
+        
         setEmail('');
         setUsername('');
         setPassword('');

@@ -45,6 +45,52 @@ type userRegisterRequest struct {
 	} `json:"user"`
 }
 
+type newTripRequest struct {
+	Trip struct {
+		Departure string `json:"departure" validate:"required"`
+		Arrival   string `json:"arrival" validate:"required"`
+		UserID    uint   `json:"user_id" validate:"required"`
+	} `json:"trip"`
+}
+
+type newPlaceRequest struct {
+	Place struct {
+		Name      string `json:"name" validate:"required"`
+		Latitude  string `json:"latitude" validate:"required"`
+		Longitude string `json:"longitude" validate:"required"`
+	} `json:"place"`
+}
+
+func (r *newTripRequest) bind(c echo.Context, t *model.Trip) error {
+	if err := c.Bind(r); err != nil {
+		return err
+	}
+	if err := c.Validate(r); err != nil {
+		return err
+	}
+
+	t.Departure = r.Trip.Departure
+	t.Arrival = r.Trip.Arrival
+	t.UserID = r.Trip.UserID
+
+	return nil
+}
+
+func (r *newPlaceRequest) bind(c echo.Context, p *model.Place) error {
+	if err := c.Bind(r); err != nil {
+		return err
+	}
+	if err := c.Validate(r); err != nil {
+		return err
+	}
+
+	p.Name = r.Place.Name
+	p.Longitude = r.Place.Longitude
+	p.Latitude = r.Place.Latitude
+
+	return nil
+}
+
 func (r *userRegisterRequest) bind(c echo.Context, u *model.User) error {
 	if err := c.Bind(r); err != nil {
 		return err
@@ -56,6 +102,12 @@ func (r *userRegisterRequest) bind(c echo.Context, u *model.User) error {
 	u.Username = r.User.Username
 	u.Email = r.User.Email
 	u.Password = r.User.Password
+
+	hashedPassword, err := u.HashPassword(r.User.Password)
+	if err != nil {
+		return err
+	}
+	u.Password = hashedPassword
 
 	return nil
 }
