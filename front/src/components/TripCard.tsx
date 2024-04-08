@@ -1,12 +1,23 @@
 import React, { useEffect, useState } from "react"
+import { useDispatch } from "react-redux"
+import { addWaypoint, removeWaypoint } from "../slices/store"
 
-const TripCard: React.FC<TripDetailsElement> = ({content}) => {
+interface Props {
+    tripDetails?: any[]
+    setTripDetails: Function
+    content: WaypointsDetails
+    waypointsDetails: any[]
+    setWaipointsDetails: Function
+}
+
+const TripCard: React.FC<Props> = ({content, tripDetails, setTripDetails, waypointsDetails, setWaipointsDetails}) => {
 
     const [fullAddress, setFullAddress] = useState('')
     const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY
     const [photo, setPhoto] = useState('')
     const [classList, setClassList] = useState('max-w-sm rounded overflow-hidden shadow-lg flex bg-gray-100 mt-4 relative')
     const [onlyText, setOnlyText] = useState(false)
+    const dispatch = useDispatch()
     useEffect(() => {
         if(content.place_id) {
             let newClassList = classList + " min-h-24"
@@ -30,12 +41,26 @@ const TripCard: React.FC<TripDetailsElement> = ({content}) => {
         }
     }, [content])
 
+    const handleClose = (place_id: string) => {
+        if(tripDetails !== undefined) {
+            let removeTripIndex = tripDetails.findIndex(wp => wp.content.place_id === place_id)
+            tripDetails.splice(removeTripIndex, 1)
+            setTripDetails(tripDetails)
+        }
+        if(waypointsDetails !== undefined) {
+            let removeWaypointsIndex = waypointsDetails.findIndex(wp => wp.place_id === place_id)
+            waypointsDetails.splice(removeWaypointsIndex, 1)
+            setWaipointsDetails(waypointsDetails)
+        }
+        dispatch(removeWaypoint(place_id))
+    }
+
     return (
         <div className="max-w-[500px] max-h-36 rounded overflow-hidden shadow-lg flex bg-gray-200 mt-4 relative">
             
             {content.place_id &&
                 <div className="absolute top-0 right-0 mt-1 mr-1">
-                    <button type="button" className="bg-[#86A873] rounded-md p-2 inline-flex items-center justify-center text-gray-800 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 transition-all">
+                    <button onClick={() => handleClose(content.place_id!)} type="button" className="bg-white rounded-md p-2 inline-flex items-center justify-center text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500">
                         <span className="sr-only">Close menu</span>
                         <svg className="h-3 w-3 flex flex-row" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
@@ -43,16 +68,18 @@ const TripCard: React.FC<TripDetailsElement> = ({content}) => {
                     </button>
                 </div>
             }
-
-            {content.photos && content.photos.length > 0 ? (
-                <div className="max-w-[30%]">
-                    <img src={photo} className="w-full h-full object-center object-cover" />
-                </div>
-            ) : (
-                <div  className="max-w-[30%]">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg" className="w-full h-full object-center object-cover" />
-                </div>
-            )
+            {content.photos && content.place_id ?
+                content.photos.length > 0 ?
+                    <div className="max-w-[30%] mr-3">
+                        <img src={photo} className="w-full h-full" />
+                    </div>
+                :
+                    <div  className="max-w-[30%]">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg" className="w-full h-full object-center object-cover" />
+                    </div>
+            :
+                <>
+                </>
             }
             <div className="flex flex-col w-full p-3">
                 {onlyText ?
