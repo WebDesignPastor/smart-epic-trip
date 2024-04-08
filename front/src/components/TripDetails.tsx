@@ -5,9 +5,10 @@ import React, { useEffect, useState } from "react"
 
 interface Props {
     waypointsDetails: WaypointsDetails[]
+    setWaypointsDetails: Function
 }
 
-const TripDetails: React.FC<Props> = ({waypointsDetails}) => {
+const TripDetails: React.FC<Props> = ({waypointsDetails, setWaypointsDetails}) => {
     
     const baseTrip = useSelector((state: RootState) => state.app.tripDetails)
     const [tripDetails, setTripDetails] = useState<any[]>()
@@ -48,7 +49,7 @@ const TripDetails: React.FC<Props> = ({waypointsDetails}) => {
             <div className="w-full px-3 h-[90%] overflow-y-scroll no-scrollbar">
                 {tripDetails && tripDetails.map((e, index: number) => {
                     return (
-                        <TripCard content={e.content} key={e.place_id ? e.place_id : index}/>
+                        <TripCard content={e.content} key={e.place_id ? e.place_id : index} tripDetails={tripDetails} setTripDetails={setTripDetails} waypointsDetails={waypointsDetails} setWaipointsDetails={setWaypointsDetails} />
                     )
                 })}
             </div>

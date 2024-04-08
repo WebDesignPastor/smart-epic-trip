@@ -1,13 +1,8 @@
-import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createSlice, current } from "@reduxjs/toolkit";
 
 interface Location {
     lat: number
     lng: number
-}
-
-export interface InitialState {
-    tripDetails: TripDetails[]
-    directionsOptions: DirectionsOptions
 }
 
 export interface TripDetails {
@@ -15,9 +10,14 @@ export interface TripDetails {
     destination: string
 }
 
-export interface Waypoints {
+export interface Dir {
     location: Location
     stopover: boolean
+}
+
+export interface Waypoints {
+    place_id: string
+    dir: Dir
 }
 
 export interface DirectionsOptions {
@@ -25,8 +25,15 @@ export interface DirectionsOptions {
     destination: google.maps.LatLngLiteral
     travelMode: google.maps.TravelMode
     avoidHighways: boolean
-    waypoints?: Waypoints[]
+    waypoints?: Dir[]
     optimizeWaypoints: Boolean
+}
+
+export interface InitialState {
+    tripDetails: TripDetails[]
+    directionsOptions: DirectionsOptions
+    waypointsDetails: WaypointsDetails[]
+    baseWaypoints: Waypoints[]
 }
 
 const initialState: InitialState = {
@@ -38,7 +45,9 @@ const initialState: InitialState = {
         avoidHighways: false,
         waypoints: [],
         optimizeWaypoints: true
-    }
+    },
+    waypointsDetails: [],
+    baseWaypoints: []
 }
 
 const appSlice = createSlice({
@@ -67,11 +76,33 @@ const appSlice = createSlice({
             }
         },
         addWaypoint: (state, action: PayloadAction<Waypoints>) => {
-            state.directionsOptions.waypoints?.push(action.payload)
+            state.directionsOptions.waypoints?.push(action.payload.dir)
+            state.baseWaypoints.push(action.payload)
+        },
+        addWaypointsDetails: (state, action: PayloadAction<WaypointsDetails>) => {
+            return {
+                ...state,
+                waypointsDetails: [...state.waypointsDetails, action.payload]
+            }
+        },
+        removeWaypoint: (state, action: PayloadAction<string>) => {
+            const wpToRemoveIndex = state.baseWaypoints.findIndex(wp => wp.place_id === action.payload)
+            const wpToRemove = state.baseWaypoints.find((wp) => wp.place_id === action.payload)
+            if(wpToRemoveIndex !== -1) {
+                if(state.directionsOptions.waypoints?.length !== undefined && state.directionsOptions.waypoints?.length > 0) {
+                    const wpDirectionIndex = state.directionsOptions.waypoints.findIndex(wp => current(wp) == current(wpToRemove?.dir))
+                    state.directionsOptions.waypoints.splice(wpDirectionIndex, 1)
+                }
+                state.baseWaypoints.splice(wpToRemoveIndex, 1)
+                const wpDetailsRemoveIndex = state.waypointsDetails.findIndex((wp) => wp.place_id === action.payload)
+                if(wpDetailsRemoveIndex !== -1) {
+                    state.waypointsDetails.splice(wpDetailsRemoveIndex, 1)
+                }
+            }
         }
     }
     
 })
 
-export const {setTrip, setOrigin, setDestination, addWaypoint} = appSlice.actions
+export const {setTrip, setOrigin, setDestination, addWaypoint, addWaypointsDetails, removeWaypoint} = appSlice.actions
 export default appSlice.reducer

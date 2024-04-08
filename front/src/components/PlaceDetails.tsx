@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react"
+import { useSelector } from "react-redux"
+import { RootState } from "../redux"
 
 interface Props {
     content: PlaceDetail
@@ -6,15 +8,13 @@ interface Props {
     addWaypoints: Function
 }
 
-// ajotuer la logique du btn pour ajouter au trip => waypoints
-// ajouter la croix pour fermer la card
-
 const PlaceDetails: React.FC<Props> = ({content, setIsShowingDetails, addWaypoints}) => {
 
     const [fullAddress, setFullAddress] = useState('')
     const [photo, setPhoto] = useState('')
     const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY
     const [classList, setClassList] = useState('')
+    const fullWp = useSelector((state: RootState) => state.app)
     useEffect(() => {
         let newFullAddress = ''
         content.address_components.map((e) => {
