@@ -56,8 +56,8 @@ const TripCard: React.FC<Props> = ({content, tripDetails, setTripDetails, waypoi
     }
 
     return (
-        <div className={classList}>
-
+        <div className="max-w-[500px] max-h-36 rounded overflow-hidden shadow-lg flex bg-gray-200 mt-4 relative">
+            
             {content.place_id &&
                 <div className="absolute top-0 right-0 mt-1 mr-1">
                     <button onClick={() => handleClose(content.place_id!)} type="button" className="bg-white rounded-md p-2 inline-flex items-center justify-center text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500">
@@ -68,7 +68,6 @@ const TripCard: React.FC<Props> = ({content, tripDetails, setTripDetails, waypoi
                     </button>
                 </div>
             }
-
             {content.photos && content.place_id ?
                 content.photos.length > 0 ?
                     <div className="max-w-[30%] mr-3">
@@ -82,23 +81,25 @@ const TripCard: React.FC<Props> = ({content, tripDetails, setTripDetails, waypoi
                 <>
                 </>
             }
-            <div className="flex flex-col w-full">
+            <div className="flex flex-col w-full p-3">
                 {onlyText ?
-                    <h3 className="m-2 text-lg flex justify-center">{content.name}</h3>
+                    <h3 className="m-2 text-lg flex justify-center"><strong>{content.name}</strong></h3>
                 :
-                    <h3 className="m-0 text-md">{content.name}</h3>
-                }
-                {content.rating &&
-                    <p className="bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 flex h-7 w-fit relative right-1.5 my-1">
-                        {content.rating}
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" className="ml-1">
-                            <path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z"/>
-                         </svg>
-                    </p>
+                    <h3 className="m-0 text-md "><strong>{content.name}</strong></h3>
                 }
                 {content.address_components &&
                     <p className="text-sm mb-1">{fullAddress}</p>
                 }
+                <div className="flex items-end justify-end">
+                    {content.rating &&
+                        <p className="bg-gray-300 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 flex h-7 w-fit right-1.5 items-end">
+                            {content.rating}
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" className="ml-1">
+                                <path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z"/>
+                            </svg>
+                        </p>
+                    }
+                </div>
             </div>
         </div>
     )
