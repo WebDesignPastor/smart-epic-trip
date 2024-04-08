@@ -75,10 +75,19 @@ interface Geometry {
     pagetoken?: string;
     rankby?: "prominence" | "distance"; 
   }
+
+  interface WaypointsDetails {
+    name: string
+    address_components: Array<any>
+    photos?: Array<any>
+    international_phone_number?: string
+    rating?: number
+    place_id?: string
+}
   
   interface TripDetailsElement {
-        content: string
-        desc?: string
+        content: WaypointsDetails
+        place_id?: string
   }
 
   interface PlaceDetail {

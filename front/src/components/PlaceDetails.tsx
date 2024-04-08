@@ -11,7 +11,7 @@ interface Props {
 
 const PlaceDetails: React.FC<Props> = ({content, setIsShowingDetails, addWaypoints}) => {
 
-    const [fullAddress, setFullAddress] = useState('flex flex-col items-start px-3 pb-4')
+    const [fullAddress, setFullAddress] = useState('')
     const [photo, setPhoto] = useState('')
     const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY
     const [classList, setClassList] = useState('')
@@ -64,7 +64,7 @@ const PlaceDetails: React.FC<Props> = ({content, setIsShowingDetails, addWaypoin
                         <div className="flex flex-row justify-between">
                             <div className="font-bold text-xl mb-2">{content.name}</div>
                             {content.rating &&
-                                <p className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2 flex h-8">
+                                <p className="bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2 flex h-8">
                                     {content.rating}
                                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" className="ml-1">
                                         <path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z"/>

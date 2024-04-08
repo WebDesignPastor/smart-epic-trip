@@ -26,6 +26,7 @@ export interface DirectionsOptions {
     travelMode: google.maps.TravelMode
     avoidHighways: boolean
     waypoints?: Waypoints[]
+    optimizeWaypoints: Boolean
 }
 
 const initialState: InitialState = {
@@ -35,7 +36,8 @@ const initialState: InitialState = {
         destination: { lat: 47.750000, lng: -3.3666700 },
         travelMode: 'DRIVING' as google.maps.TravelMode,
         avoidHighways: false,
-        waypoints: []
+        waypoints: [],
+        optimizeWaypoints: true
     }
 }
 
