@@ -31,7 +31,7 @@ const TripCard: React.FC<TripDetailsElement> = ({content}) => {
     }, [content])
 
     return (
-        <div className="max-w-sm max-h-36 rounded overflow-hidden shadow-lg flex bg-gray-200 mt-4 relative">
+        <div className="max-w-[500px] max-h-36 rounded overflow-hidden shadow-lg flex bg-gray-200 mt-4 relative">
             
             {content.place_id &&
                 <div className="absolute top-0 right-0 mt-1 mr-1">
