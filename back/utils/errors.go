@@ -46,3 +46,10 @@ func NotFound() Error {
 	e.Errors["body"] = "resource not found"
 	return e
 }
+
+func SuccessMessage(string2 string) Error {
+	e := Error{}
+	e.Errors = make(map[string]interface{})
+	e.Errors["body"] = "Deleted well"
+	return e
+}

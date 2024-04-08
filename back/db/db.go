@@ -2,7 +2,6 @@ package db
 
 import (
 	"fmt"
-
 	"github.com/EpitechMscProPromo2025/T-WEB-800-REN_8/model"
 	"github.com/glebarez/sqlite"
 	"gorm.io/gorm"
@@ -19,5 +18,7 @@ func New() *gorm.DB {
 func AutoMigrate(db *gorm.DB) {
 	db.AutoMigrate(
 		&model.User{},
+		&model.Trip{},
+		&model.Place{},
 	)
 }

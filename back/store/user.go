@@ -42,7 +42,6 @@ func (us *UserStore) GetByEmail(e string) (*model.User, error) {
 
 func (us *UserStore) GetAll() ([]model.User, error) {
 	var users []model.User
-	//var result []model.User
 
 	result := us.db.Find(&users)
 	if result.Error != nil {
