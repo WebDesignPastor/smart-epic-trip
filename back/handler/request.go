@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"errors"
+
 	"github.com/EpitechMscProPromo2025/T-WEB-800-REN_8/model"
 	"github.com/labstack/echo/v4"
 )
@@ -43,6 +45,20 @@ type userRegisterRequest struct {
 		Email    string `json:"email" validate:"required,email"`
 		Password string `json:"password" validate:"required"`
 	} `json:"user"`
+}
+
+type getAllTripsRequest struct {
+	UserID uint `json:"user_id"`
+}
+
+func (r *getAllTripsRequest) bind(c echo.Context) error {
+	if err := c.Bind(r); err != nil {
+		return err
+	}
+	if r.UserID == 0 {
+		return errors.New("user_id parameter is required")
+	}
+	return nil
 }
 
 type newTripRequest struct {

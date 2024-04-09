@@ -9,17 +9,21 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// getAllTrips handles GET request to retrieve all trips
-//func (h *Handler) getAllTrips(c echo.Context) error {
-//	// Retrieve all trips from the database
-//	trips, err := h.tripStore.GetAll()
-//	if err != nil {
-//		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
-//	}
-//
-//	// Return the trips as JSON response
-//	return c.JSON(http.StatusOK, trips)
-//}
+func (h *Handler) GetAllByUser(c echo.Context) error {
+	var req getAllTripsRequest
+	if err := req.bind(c); err != nil {
+		return c.JSON(http.StatusBadRequest, utils.NewError(err))
+	}
+
+	// Retrieve all trips from the database for a User
+	trips, err := h.tripStore.GetAllByUser(req.UserID)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+	}
+
+	// Return the trips as JSON response
+	return c.JSON(http.StatusOK, trips)
+}
 
 func (h *Handler) saveTrip(c echo.Context) error {
 	var t model.Trip

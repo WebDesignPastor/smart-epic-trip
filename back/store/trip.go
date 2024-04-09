@@ -2,9 +2,10 @@ package store
 
 import (
 	"errors"
+	"log"
+
 	"github.com/EpitechMscProPromo2025/T-WEB-800-REN_8/model"
 	"gorm.io/gorm"
-	"log"
 )
 
 type TripStore struct {
@@ -17,11 +18,13 @@ func NewTripStore(db *gorm.DB) *TripStore {
 	}
 }
 
-func (ts *TripStore) GetAll() ([]model.Trip, error) {
+func (ts *TripStore) GetAllByUser(userID uint) ([]model.Trip, error) {
 	var trips []model.Trip
-	if err := ts.db.Find(&trips).Error; err != nil {
+
+	if err := ts.db.Where("user_id = ?", userID).Find(&trips).Error; err != nil {
 		return nil, err
 	}
+
 	return trips, nil
 }
 
