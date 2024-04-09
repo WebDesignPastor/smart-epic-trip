@@ -21,7 +21,7 @@ func (h *Handler) Register(v1 *echo.Group) {
 		SigningKey: []byte("secret"),
 	}
 
-	u := v1.Group("/user")
+	u := v1.Group("/users")
 	// all route will using the jwt config will check for jwt
 	u.Use(echojwt.WithConfig(config))
 	u.GET("", h.GetAll)
