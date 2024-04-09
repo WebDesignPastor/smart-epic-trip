@@ -10,7 +10,6 @@ import TripDetails from "./TripDetails"
 import PlaceDetails from "./PlaceDetails"
 import { useDispatch } from "react-redux"
 import { addWaypoint, addWaypointsDetails } from "../slices/store"
-import { checkIfArrayHasValue, sortArrayByPropertyType } from "../utils/array"
 
 export interface Markers {
     id: string
