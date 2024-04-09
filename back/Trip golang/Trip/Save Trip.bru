@@ -1,0 +1,39 @@
+meta {
+  name: Save Trip
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://localhost:8080/api/trips/
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "trip": {
+      "departure": "Paris",
+      "arrival": "Auray",
+      "userID": 1
+    },
+    "places": [
+      {
+        "name": "Place1",
+        "latitude": "latitude1",
+        "longitude": "longitude1"
+      },
+      {
+        "name": "Place2",
+        "latitude": "latitude2",
+        "longitude": "longitude2"
+      },
+      {
+        "name": "Place3",
+        "latitude": "latitude3",
+        "longitude": "longitude3"
+      }
+    ]
+  }
+  
+}

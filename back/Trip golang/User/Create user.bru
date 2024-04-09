@@ -1,0 +1,21 @@
+meta {
+  name: Create user
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:8080/api/users/
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "user": {
+      "email": "test1@test.com",
+      "username": "test1",
+      "password": "test1"
+    }
+  }
+}
