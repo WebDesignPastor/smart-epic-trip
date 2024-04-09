@@ -21,6 +21,49 @@ import (
 //	return c.JSON(http.StatusOK, trips)
 //}
 
+func (h *Handler) saveTrip(c echo.Context) error {
+	var t model.Trip
+	var req newTripRequest
+	if err := req.bind(c, &t); err != nil {
+		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
+	}
+
+	if err := h.tripStore.Create(&t); err != nil {
+		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
+	}
+
+	for _, placeReq := range req.Places {
+		place, err := h.placeStore.GetByName(placeReq.Name)
+		if err != nil {
+			// Handle the error
+			return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+		}
+		if place == nil {
+			// Place not found, create a new place
+			newPlace := model.Place{
+				Name:      placeReq.Name,
+				Latitude:  placeReq.Latitude,
+				Longitude: placeReq.Longitude,
+			}
+			if err := h.placeStore.Create(&newPlace); err != nil {
+				return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
+			}
+			// Link the new place to the trip
+			if err := h.tripStore.LinkPlaceToTrip(t.ID, newPlace.ID); err != nil {
+				return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
+			}
+		} else {
+			// If the place exists, link it to the trip
+			if err := h.tripStore.LinkPlaceToTrip(t.ID, place.ID); err != nil {
+				return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
+			}
+		}
+
+	}
+
+	return c.JSON(http.StatusCreated, newTripResponse(&t))
+}
+
 // GetTrip handles GET request to retrieve a specific trip by ID
 func (h *Handler) GetTrip(c echo.Context) error {
 	// Extract trip ID from URL parameter

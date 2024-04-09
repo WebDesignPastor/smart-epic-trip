@@ -9,5 +9,6 @@ type Trip struct {
 	Departure string
 	Arrival   string
 	UserID    uint
-	User      User `gorm:"foreignKey:UserID"`
+	User      User    `gorm:"foreignKey:UserID"`
+	Places    []Place `gorm:"many2many:trip_places"`
 }
