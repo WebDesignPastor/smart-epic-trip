@@ -1,11 +1,6 @@
 import React from "react"
-import { Markers } from "./MapView"
-import { checkIfArrayHasValue, sortArrayByPropertyType } from "../utils/array"
 
 interface Props {
-    searchHotel: () => void,
-    searhBars: () => void,
-    searhRestaurants: () => void,
     isLoading: boolean,
     setIsLoading: Function
     isBarsSearching: boolean
@@ -14,63 +9,33 @@ interface Props {
     setHotelsSearching: Function
     isRestaurantsSearching: boolean
     setRestaurantsSearching: Function
-    setMarkers: Function
-    markers: Markers[]
+    handlePoi: Function
 }
 
 const MapOptions: React.FC<Props> = ({ 
-    searchHotel, 
-    searhBars, 
-    searhRestaurants, 
-    isLoading, 
-    setIsLoading, 
+    handlePoi,
     isBarsSearching, 
     setBarsSearching, 
     isHotelsSearching,
     setHotelsSearching,
     isRestaurantsSearching,
     setRestaurantsSearching,
-    setMarkers,
-    markers
 }) => {
 
     const handleSearchBars = () => {
-        if(!checkIfArrayHasValue(markers, 'bars')) {
-            setIsLoading(!isLoading)
-            searhBars()
-            setIsLoading(!isLoading)
-        } else {
-            let newMarkersCollection = markers
-            let newArr = sortArrayByPropertyType(newMarkersCollection, 'bars')
-            setMarkers(newArr)
-        }
         setBarsSearching(!isBarsSearching)
     }
 
     const handleSearchHotels = () => {
-        if(!checkIfArrayHasValue(markers, 'hotel')) {
-            setIsLoading(!isLoading)
-            searchHotel()
-            setIsLoading(!isLoading)
-        } else {
-            let newMarkersCollection = markers
-            let newArr = sortArrayByPropertyType(newMarkersCollection, 'hotel')
-            setMarkers(newArr)
-        }
         setHotelsSearching(!isHotelsSearching)
     }
 
     const handleSearchRestaurants = () => {
-        if(!checkIfArrayHasValue(markers, 'restaurant')) {
-            setIsLoading(!isLoading)
-            searhRestaurants()
-            setIsLoading(!isLoading)
-        } else {
-            let newMarkersCollection = markers
-            let newArr = sortArrayByPropertyType(newMarkersCollection, 'restaurant')
-            setMarkers(newArr)
-        }
         setRestaurantsSearching(!isRestaurantsSearching)
+    }
+
+    const handleSearchPoi = () => {
+        handlePoi()
     }
 
     return (
@@ -116,6 +81,9 @@ const MapOptions: React.FC<Props> = ({
                     Evenements
                 </button>
             </div>
+            <button onClick={handleSearchPoi} type="button" className="ml-2 px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg">
+                    Rechercher
+            </button>
         </nav>
     )
 }

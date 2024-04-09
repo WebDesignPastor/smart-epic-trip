@@ -10,6 +10,7 @@ import TripDetails from "./TripDetails"
 import PlaceDetails from "./PlaceDetails"
 import { useDispatch } from "react-redux"
 import { addWaypoint, addWaypointsDetails } from "../slices/store"
+import { checkIfArrayHasValue, sortArrayByPropertyType } from "../utils/array"
 
 export interface Markers {
     id: string
@@ -85,14 +86,13 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
     const directionService = new google.maps.DirectionsService()
 
     const createCustomMarker = (data: PlaceApiResResult[], type: string) => {
-        let newMarkerCollection: Markers[] = markers
+        let newMarkerCollection: Markers[] = []
         data.map((res: PlaceApiResResult) => {
             if(!newMarkerCollection.find((e:Markers) => e.id === res.place_id)) {
                 newMarkerCollection.push({lat: res.geometry.location.lat, lng: res.geometry.location.lng, id: res.place_id, type: type})
             }
         })
-        setMarkers(newMarkerCollection)
-        setIsLoading(false)
+        return newMarkerCollection
     }
 
     const onMarkerClick = async (index: string) => {
@@ -102,37 +102,61 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
         setPlaceDetails(detailsResult)
         setIsShowingDetails(true)
         setIsLoading(false)
-        // donc besoin du place id de l'endroit
     }
 
     const searchHotel = async () => {
-        setIsLoading(true)
         const centerCoord = mapRef.current?.getCenter()
         const hotel = await axios.get(`${apiUrl}/hotels/all?location=${centerCoord?.lat()},${centerCoord?.lng()}&radius=${mapRadius}`)
         if(hotel.data.results) {
             const results = hotel.data.results
-            createCustomMarker(results, 'hotel')
+            let toReturn = createCustomMarker(results, 'hotel')
+            return toReturn
         }
     }
 
     const searhBars = async () => {
-        setIsLoading(true)
         const centerCoord = mapRef.current?.getCenter()
         const bars = await axios.get(`${apiUrl}/bars/all?location=${centerCoord?.lat()},${centerCoord?.lng()}&radius=${mapRadius}`)
         if(bars.data.results) {
             const results = bars.data.results
-            createCustomMarker(results, 'bars')
+            let toReturn = createCustomMarker(results, 'bars')
+            return toReturn
         }
     }
 
     const searhRestaurants = async () => {
-        setIsLoading(true)
         const centerCoord = mapRef.current?.getCenter()
         const restaurant = await axios.get(`${apiUrl}/restaurants/all?location=${centerCoord?.lat()},${centerCoord?.lng()}&radius=${mapRadius}`)
-        if(restaurant.data.results) {
+        if(restaurant.data.results) { 
             const results = restaurant.data.results
-            createCustomMarker(results, 'restaurant')
+            let toReturn = createCustomMarker(results, 'restaurant')
+            return toReturn
         }
+    }
+
+    const handlePoi = async () => {
+        setIsLoading(!isLoading)
+        let newMarkers: Markers[] = []
+        if(isRestaurantsSearching) {
+            let res = await searhRestaurants()
+            if(res !== undefined) {
+                newMarkers = newMarkers.concat(res)
+            }
+        }
+        if(isHotelsSearching) {
+            let res = await searchHotel()
+            if(res !== undefined) {
+                newMarkers = newMarkers.concat(res)
+            }
+        }
+        if(isBarsSearching) {
+            let res = await searhBars()
+            if(res !== undefined) {
+                newMarkers = newMarkers.concat(res)
+            }
+        }
+        setMarkers(newMarkers)
+        setIsLoading(!isLoading)
     }
 
     const renderSwitch = (marker: Markers) => {
@@ -186,10 +210,6 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
                 const distance = Math.round(calculateDistance(ne.lat(), ne.lng(), sw.lat(), ne.lng()) / 2)
                 
                 setMapRadius(distance)
-                setMarkers([])
-                setBarsSearching(false)
-                setHotelsSearching(false)
-                setRestaurantsSearching(false)
             }
             if(directionsOptions) {
                 calculateDirections(directionsOptions, newCenter)
@@ -243,10 +263,10 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
 
     return (
         <>  
-            <MapOptions searchHotel={searchHotel} searhBars={searhBars} searhRestaurants={searhRestaurants} 
+            <MapOptions
             isLoading={isLoading} setIsLoading={setIsLoading} isHotelsSearching={isHotelsSearching} setHotelsSearching={setHotelsSearching}
             isBarsSearching={isBarsSearching} setBarsSearching={setBarsSearching} isRestaurantsSearching={isRestaurantsSearching} 
-            setRestaurantsSearching={setRestaurantsSearching} setMarkers={setMarkers} markers={markers} />
+            setRestaurantsSearching={setRestaurantsSearching} handlePoi={handlePoi} />
             <div className="w-full h-full grid grid-rows-1 grid-cols-12 overflow-hidden">
                 <div className="col-start-1 col-end-5">
                     {isShowingDetails ?
