@@ -9,7 +9,7 @@ import { RootState } from '../redux';
 import TripDetails from "./TripDetails"
 import PlaceDetails from "./PlaceDetails"
 import { useDispatch } from "react-redux"
-import { addWaypoint } from "../slices/store"
+import { addWaypoint, addWaypointsDetails } from "../slices/store"
 
 export interface Markers {
     id: string
@@ -234,7 +234,8 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
             let newWaypointCollection = [...waypointsDetails, waypointDetails]
             setWaypointsDetails(newWaypointCollection)
             currentDirectionsOptions.waypoints!.push(newWaypoint.dir)
-            dispatch(addWaypoint(newWaypoint.dir))
+            dispatch(addWaypoint(newWaypoint))
+            dispatch(addWaypointsDetails(waypointDetails))
             calculateDirections(currentDirectionsOptions, center)
             setIsShowingDetails(false)
         }
@@ -251,7 +252,7 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
                     {isShowingDetails ?
                         <PlaceDetails content={placeDetails!} setIsShowingDetails={setIsShowingDetails} addWaypoints={addWaypoints} />
                     :
-                        <TripDetails waypointsDetails={waypointsDetails} />
+                        <TripDetails waypointsDetails={waypointsDetails} setWaypointsDetails={setWaypointsDetails} />
                     }
                 </div>
                 <div className="col-start-5 col-end-13">

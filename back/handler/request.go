@@ -51,6 +51,11 @@ type newTripRequest struct {
 		Arrival   string `json:"arrival" validate:"required"`
 		UserID    uint   `json:"user_id" validate:"required"`
 	} `json:"trip"`
+	Places []struct {
+		Name      string `json:"name" validate:"required"`
+		Latitude  string `json:"latitude" validate:"required"`
+		Longitude string `json:"longitude" validate:"required"`
+	} `json:"places"`
 }
 
 type newPlaceRequest struct {

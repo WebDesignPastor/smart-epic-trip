@@ -7,4 +7,5 @@ type Store interface {
 	Create(*model.Trip) error
 	Update(*model.Trip) error
 	Delete(*model.Trip) error
+	LinkPlaceToTrip(tripID, placeID uint) error
 }
