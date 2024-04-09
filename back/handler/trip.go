@@ -35,15 +35,14 @@ func (h *Handler) saveTrip(c echo.Context) error {
 	for _, placeReq := range req.Places {
 		place, err := h.placeStore.GetByName(placeReq.Name)
 		if err != nil {
-			// Handle the error
 			return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 		}
 		if place == nil {
-			// Place not found, create a new place
 			newPlace := model.Place{
-				Name:      placeReq.Name,
-				Latitude:  placeReq.Latitude,
-				Longitude: placeReq.Longitude,
+				Name:          placeReq.Name,
+				Latitude:      placeReq.Latitude,
+				Longitude:     placeReq.Longitude,
+				Google_API_ID: placeReq.Google_API_ID,
 			}
 			if err := h.placeStore.Create(&newPlace); err != nil {
 				return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))

@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"github.com/EpitechMscProPromo2025/T-WEB-800-REN_8/model"
 	"github.com/labstack/echo/v4"
 )
@@ -53,17 +52,19 @@ type newTripRequest struct {
 		UserID    uint   `json:"user_id" validate:"required"`
 	} `json:"trip"`
 	Places []struct {
-		Name      string `json:"name" validate:"required"`
-		Latitude  string `json:"latitude" validate:"required"`
-		Longitude string `json:"longitude" validate:"required"`
+		Name          string `json:"name" validate:"required"`
+		Latitude      string `json:"latitude" validate:"required"`
+		Longitude     string `json:"longitude" validate:"required"`
+		Google_API_ID string `json:"Google_API_ID" validate:"required"`
 	} `json:"places"`
 }
 
 type newPlaceRequest struct {
 	Place struct {
-		Name      string `json:"name" validate:"required"`
-		Latitude  string `json:"latitude" validate:"required"`
-		Longitude string `json:"longitude" validate:"required"`
+		Name          string `json:"name" validate:"required"`
+		Latitude      string `json:"latitude" validate:"required"`
+		Longitude     string `json:"longitude" validate:"required"`
+		Google_API_ID string `json:"Google_API_ID" validate:"required"`
 	} `json:"place"`
 }
 
@@ -75,16 +76,9 @@ func (r *newTripRequest) bind(c echo.Context, t *model.Trip) error {
 		return err
 	}
 
-	// Log UserID before assignment
-	fmt.Println("UserID before assignment:", r.Trip.UserID)
-
-	// Assign values
 	t.Departure = r.Trip.Departure
 	t.Arrival = r.Trip.Arrival
 	t.UserID = r.Trip.UserID
-
-	// Log UserID after assignment
-	fmt.Println("UserID after assignment:", t.UserID)
 
 	return nil
 }
@@ -100,6 +94,7 @@ func (r *newPlaceRequest) bind(c echo.Context, p *model.Place) error {
 	p.Name = r.Place.Name
 	p.Longitude = r.Place.Longitude
 	p.Latitude = r.Place.Latitude
+	p.Google_API_ID = r.Place.Google_API_ID
 
 	return nil
 }
