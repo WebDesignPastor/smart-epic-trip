@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"github.com/EpitechMscProPromo2025/T-WEB-800-REN_8/model"
 	"github.com/labstack/echo/v4"
 )
@@ -74,9 +75,16 @@ func (r *newTripRequest) bind(c echo.Context, t *model.Trip) error {
 		return err
 	}
 
+	// Log UserID before assignment
+	fmt.Println("UserID before assignment:", r.Trip.UserID)
+
+	// Assign values
 	t.Departure = r.Trip.Departure
 	t.Arrival = r.Trip.Arrival
 	t.UserID = r.Trip.UserID
+
+	// Log UserID after assignment
+	fmt.Println("UserID after assignment:", t.UserID)
 
 	return nil
 }
