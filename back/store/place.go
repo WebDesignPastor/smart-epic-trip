@@ -24,7 +24,7 @@ func (ps *PlaceStore) GetByName(name string) (*model.Place, error) {
 	var place model.Place
 	if err := ps.db.Where("name = ?", name).First(&place).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, nil // Place not found
+			return nil, nil
 		}
 		return nil, err
 	}
