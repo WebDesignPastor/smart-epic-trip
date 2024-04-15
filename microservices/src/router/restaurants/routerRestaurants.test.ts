@@ -8,4 +8,4 @@ test("base all bars route", async () => {
     expect(res.statusCode).toEqual(200)
     expect(res.statusMessage).toEqual('OK')
     expect(JSON.parse(res.body).results).toBeDefined()
-}) 
+})

@@ -12,6 +12,10 @@ const config = {
         },
         googlePlaceDetails: {
             url: process.env.GOOGLE_API_PLACE_DETAILS_URL || "https://maps.googleapis.com/maps/api/place/details/json",
+        },
+        ticketMaster: {
+            url: process.env.TICKETMASTER_API_URL || "https://app.ticketmaster.com/discovery/v2/events",
+            apiKey: process.env.TICKETMASTER_API_KEY
         }
     },
     options: {

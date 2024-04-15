@@ -6,6 +6,7 @@ import {
   hotelPlugin,
   geoCodingPlugin,
   detailPlugin,
+  eventsPlugin,
 } from "./router"
 
 export function build() {
@@ -19,6 +20,7 @@ export function build() {
     server.register(hotelPlugin)
     server.register(geoCodingPlugin)
     server.register(detailPlugin)
+    server.register(eventsPlugin)
 
     server.get('/ping', async (request, reply) => {
     return 'pong\n'
