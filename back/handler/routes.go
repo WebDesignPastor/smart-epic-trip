@@ -29,7 +29,7 @@ func (h *Handler) Register(v1 *echo.Group) {
 
 	// Trip routes
 	t := v1.Group("/trips")
-	//t.GET("", h.getAllTrips)
+	t.GET("", h.GetAllByUser)
 	t.GET("/:id", h.GetTrip)
 	t.POST("", h.saveTrip)
 	t.PUT("/:id", h.UpdateTrip)
