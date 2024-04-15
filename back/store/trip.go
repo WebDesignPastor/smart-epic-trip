@@ -18,10 +18,10 @@ func NewTripStore(db *gorm.DB) *TripStore {
 	}
 }
 
-func (ts *TripStore) GetAllByUser(userID uint) ([]model.Trip, error) {
+func (ts *TripStore) GetAllByUser(UserId uint) ([]model.Trip, error) {
 	var trips []model.Trip
 
-	if err := ts.db.Where("user_id = ?", userID).Find(&trips).Error; err != nil {
+	if err := ts.db.Where("user_id = ?", UserId).Find(&trips).Error; err != nil {
 		return nil, err
 	}
 

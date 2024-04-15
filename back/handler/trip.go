@@ -16,7 +16,7 @@ func (h *Handler) GetAllByUser(c echo.Context) error {
 	}
 
 	// Retrieve all trips from the database for a User
-	trips, err := h.tripStore.GetAllByUser(req.UserID)
+	trips, err := h.tripStore.GetAllByUser(req.UserId)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
@@ -43,10 +43,10 @@ func (h *Handler) saveTrip(c echo.Context) error {
 		}
 		if place == nil {
 			newPlace := model.Place{
-				Name:          placeReq.Name,
-				Latitude:      placeReq.Latitude,
-				Longitude:     placeReq.Longitude,
-				Google_API_ID: placeReq.Google_API_ID,
+				Name:        placeReq.Name,
+				Latitude:    placeReq.Latitude,
+				Longitude:   placeReq.Longitude,
+				GoogleApiId: placeReq.GoogleApiId,
 			}
 			if err := h.placeStore.Create(&newPlace); err != nil {
 				return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
