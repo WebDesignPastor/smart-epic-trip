@@ -34,8 +34,6 @@ export const eventsPlugin = async (fastify: FastifyInstance) => {
                 }
                 
                 const params = request.params as {event_id: string}
-                console.log(params)
-
                 if(!params.event_id) {
                     return Error
                 }
