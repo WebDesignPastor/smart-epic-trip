@@ -34,6 +34,8 @@ export interface InitialState {
     directionsOptions: DirectionsOptions
     waypointsDetails: WaypointsDetails[]
     baseWaypoints: Waypoints[]
+    startDate: string 
+    endDate: string
 }
 
 const initialState: InitialState = {
@@ -47,7 +49,9 @@ const initialState: InitialState = {
         optimizeWaypoints: true
     },
     waypointsDetails: [],
-    baseWaypoints: []
+    baseWaypoints: [],
+    startDate: '',
+    endDate: ''
 }
 
 const appSlice = createSlice({
@@ -99,10 +103,22 @@ const appSlice = createSlice({
                     state.waypointsDetails.splice(wpDetailsRemoveIndex, 1)
                 }
             }
+        },
+        setDepartureDate: (state, action: PayloadAction<string>) => {
+            return {
+                ...state,
+                startDate: action.payload
+            }
+        },
+        setArrivlaDate:  (state, action: PayloadAction<string>) => {
+            return {
+                ...state,
+                endDate: action.payload
+            }
         }
     }
     
 })
 
-export const {setTrip, setOrigin, setDestination, addWaypoint, addWaypointsDetails, removeWaypoint} = appSlice.actions
+export const {setTrip, setOrigin, setDestination, addWaypoint, addWaypointsDetails, removeWaypoint, setArrivlaDate, setDepartureDate} = appSlice.actions
 export default appSlice.reducer

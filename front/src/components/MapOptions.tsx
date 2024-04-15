@@ -10,6 +10,8 @@ interface Props {
     isRestaurantsSearching: boolean
     setRestaurantsSearching: Function
     handlePoi: Function
+    setEventsSearching: Function
+    isEventsSearching: boolean
 }
 
 const MapOptions: React.FC<Props> = ({ 
@@ -20,6 +22,8 @@ const MapOptions: React.FC<Props> = ({
     setHotelsSearching,
     isRestaurantsSearching,
     setRestaurantsSearching,
+    setEventsSearching,
+    isEventsSearching
 }) => {
 
     const handleSearchBars = () => {
@@ -32,6 +36,10 @@ const MapOptions: React.FC<Props> = ({
 
     const handleSearchRestaurants = () => {
         setRestaurantsSearching(!isRestaurantsSearching)
+    }
+
+    const handleSearchEvents = () => {
+        setEventsSearching(!isEventsSearching)
     }
 
     const handleSearchPoi = () => {
@@ -77,7 +85,13 @@ const MapOptions: React.FC<Props> = ({
                     onClick={handleSearchHotels}>
                     Hotels
                 </button>
-                <button type="button" className="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-e-lg">
+                <button type="button" className={isEventsSearching 
+                    ?
+                        "px-4 py-2 text-sm font-medium text-white bg-teal-400 border border-gray-200 rounded-e-lg"
+                    :
+                        "px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-e-lg"
+                    }
+                    onClick={handleSearchEvents}>
                     Evenements
                 </button>
             </div>

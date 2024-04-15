@@ -30,6 +30,8 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
     const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY
     const apiUrl = import.meta.env.VITE_API_URL
     const directionsOptions = useSelector((state: RootState) => state.app.directionsOptions)
+    const departureDate = useSelector((state: RootState) => state.app.startDate)
+    const arrivalDate = useSelector((state: RootState) => state.app.endDate)
     const dispatch = useDispatch()
     const defaultMapOptions = {
         fullscreenControl: false,
@@ -71,6 +73,7 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
     const [isBarsSearching, setBarsSearching] = useState(false)
     const [isHotelsSearching, setHotelsSearching] = useState(false)
     const [isRestaurantsSearching, setRestaurantsSearching] = useState(false)
+    const [isEventsSearching, setEventsSearching] = useState(false)
     const [placeDetails, setPlaceDetails] = useState<PlaceDetail>()
     const [isShowingDetails, setIsShowingDetails] = useState(false)
     const [waypointsDetails, setWaypointsDetails] = useState<any>([])
@@ -85,13 +88,23 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
     const directionService = new google.maps.DirectionsService()
 
     const createCustomMarker = (data: PlaceApiResResult[], type: string) => {
-        let newMarkerCollection: Markers[] = []
-        data.map((res: PlaceApiResResult) => {
-            if(!newMarkerCollection.find((e:Markers) => e.id === res.place_id)) {
-                newMarkerCollection.push({lat: res.geometry.location.lat, lng: res.geometry.location.lng, id: res.place_id, type: type})
-            }
-        })
-        return newMarkerCollection
+        if(type !== 'events') {
+            let newMarkerCollection: Markers[] = []
+            data.map((res: PlaceApiResResult) => {
+                if(!newMarkerCollection.find((e:Markers) => e.id === res.place_id)) {
+                    newMarkerCollection.push({lat: res.geometry.location.lat, lng: res.geometry.location.lng, id: res.place_id, type: type})
+                }
+            })
+            return newMarkerCollection
+        } else {
+            let newMarkerCollection: Markers[] = []
+            data.map((res: any) => {
+                if(!newMarkerCollection.find((e:Markers) => e.id === res.place_id)) {
+                    newMarkerCollection.push({lat: Number(res._embedded.venues[0].location.latitude), lng: Number(res._embedded.venues[0].location.longitude), id: res.id, type: type})
+                }
+            })
+            return newMarkerCollection
+        }
     }
 
     const onMarkerClick = async (index: string) => {
@@ -133,6 +146,18 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
         }
     }
 
+    const searchEvents= async () => {
+        const centerCoord = mapRef.current?.getCenter()
+        const latlong = `${centerCoord?.lat()},${centerCoord?.lng()}`
+        const fullUrl = `${apiUrl}/events?latlong=${latlong}&radius=${Math.round(mapRadius/1000)}&startDateTime=${departureDate}&endDateTime=${arrivalDate}`
+        const events = await axios.get(fullUrl)
+        if(events.data.events) {
+            const results = events.data.events
+            let toReturn = createCustomMarker(results, 'events')
+            return toReturn
+        }
+    }
+
     const handlePoi = async () => {
         setIsLoading(!isLoading)
         let newMarkers: Markers[] = []
@@ -154,6 +179,12 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
                 newMarkers = newMarkers.concat(res)
             }
         }
+        if(isEventsSearching) {
+            let res = await searchEvents()
+            if(res !== undefined) {
+                newMarkers = newMarkers.concat(res)
+            }
+        }
         setMarkers(newMarkers)
         setIsLoading(!isLoading)
     }
@@ -166,6 +197,8 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
                 return <MarkerLogo  color="bg-red-400" content="H" handler={onMarkerClick} index={marker.id}/>
             case 'bars':
                 return <MarkerLogo  color="bg-blue-400" content="B" handler={onMarkerClick} index={marker.id}/>
+            case 'events':
+                return <MarkerLogo  color="bg-teal-400" content="E" handler={onMarkerClick} index={marker.id}/>
         }
     }
 
@@ -265,7 +298,7 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
             <MapOptions
             isLoading={isLoading} setIsLoading={setIsLoading} isHotelsSearching={isHotelsSearching} setHotelsSearching={setHotelsSearching}
             isBarsSearching={isBarsSearching} setBarsSearching={setBarsSearching} isRestaurantsSearching={isRestaurantsSearching} 
-            setRestaurantsSearching={setRestaurantsSearching} handlePoi={handlePoi} />
+            setRestaurantsSearching={setRestaurantsSearching} handlePoi={handlePoi} isEventsSearching={isEventsSearching} setEventsSearching={setEventsSearching} />
             <div className="w-full h-full grid grid-rows-1 grid-cols-12 overflow-hidden">
                 <div className="col-start-1 col-end-5">
                     {isShowingDetails ?
