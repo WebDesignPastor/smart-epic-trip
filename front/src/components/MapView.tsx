@@ -74,9 +74,11 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
     const [isHotelsSearching, setHotelsSearching] = useState(false)
     const [isRestaurantsSearching, setRestaurantsSearching] = useState(false)
     const [isEventsSearching, setEventsSearching] = useState(false)
-    const [placeDetails, setPlaceDetails] = useState<PlaceDetail>()
+    const [placeDetails, setPlaceDetails] = useState<PlaceDetail | null>(null)
     const [isShowingDetails, setIsShowingDetails] = useState(false)
     const [waypointsDetails, setWaypointsDetails] = useState<any>([])
+    const [isGoogleMapResult, setGoogleMapResult] = useState(false)
+    const [eventDetails, setEventDetails] = useState<EventDetail | null>(null)
     
     const { isLoaded } = useJsApiLoader({ googleMapsApiKey })
 
@@ -107,11 +109,20 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
         }
     }
 
-    const onMarkerClick = async (index: string) => {
+    const onMarkerClick = async (index: string, type: string) => {
         setIsLoading(true)
-        const details = await axios.get(`${apiUrl}/details/${index}`)
-        let detailsResult = details.data.result 
-        setPlaceDetails(detailsResult)
+        if(type !== 'events') {
+            const details = await axios.get(`${apiUrl}/details/${index}`)
+            let detailsResult = details.data.result 
+            setGoogleMapResult(true)
+            setEventDetails(null)
+            setPlaceDetails(detailsResult)
+        } else {
+            setGoogleMapResult(false)
+            const details = await axios.get(`${apiUrl}/events/${index}`)
+            setEventDetails(details.data)
+            setPlaceDetails(null)
+        }
         setIsShowingDetails(true)
         setIsLoading(false)
     }
@@ -192,13 +203,13 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
     const renderSwitch = (marker: Markers) => {
         switch (marker.type) {
             case 'restaurant' :
-                return <MarkerLogo  color="bg-lime-400" content="R" handler={onMarkerClick} index={marker.id}/>
+                return <MarkerLogo  color="bg-lime-400" content="R" handler={onMarkerClick} index={marker.id} markerType={marker.type} />
             case 'hotel':
-                return <MarkerLogo  color="bg-red-400" content="H" handler={onMarkerClick} index={marker.id}/>
+                return <MarkerLogo  color="bg-red-400" content="H" handler={onMarkerClick} index={marker.id} markerType={marker.type}/>
             case 'bars':
-                return <MarkerLogo  color="bg-blue-400" content="B" handler={onMarkerClick} index={marker.id}/>
+                return <MarkerLogo  color="bg-blue-400" content="B" handler={onMarkerClick} index={marker.id} markerType={marker.type}/>
             case 'events':
-                return <MarkerLogo  color="bg-teal-400" content="E" handler={onMarkerClick} index={marker.id}/>
+                return <MarkerLogo  color="bg-teal-400" content="E" handler={onMarkerClick} index={marker.id} markerType={marker.type}/>
         }
     }
 
@@ -302,7 +313,7 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
             <div className="w-full h-full grid grid-rows-1 grid-cols-12 overflow-hidden">
                 <div className="col-start-1 col-end-5">
                     {isShowingDetails ?
-                        <PlaceDetails content={placeDetails!} setIsShowingDetails={setIsShowingDetails} addWaypoints={addWaypoints} />
+                        <PlaceDetails content={placeDetails} setIsShowingDetails={setIsShowingDetails} addWaypoints={addWaypoints} isGoogleMapResult={isGoogleMapResult} eventContent={eventDetails} />
                     :
                         <TripDetails waypointsDetails={waypointsDetails} setWaypointsDetails={setWaypointsDetails} />
                     }

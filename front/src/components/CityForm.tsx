@@ -52,7 +52,7 @@ const CityForm: React.FC<CityFormProps> = ({ onSubmit }) => {
 
     const handleSubmit = async (e: { preventDefault: () => void; }) => {
         e.preventDefault()
-        if(departure !== '' && arrival !== '') {
+        if(departure !== '' && arrival !== '' && endDate !== '' && startDate !== '') {
             setIsLoading(!isLoading)
             onSubmit(departure, arrival)
             setSubmissionMessage(`Vous allez de ${departure} à ${arrival}`)
@@ -105,6 +105,7 @@ const CityForm: React.FC<CityFormProps> = ({ onSubmit }) => {
                     <div>
                         <label className='mr-2'>Début :</label>
                         <input 
+                            required
                             type='date'
                             value={startDate}
                             onChange={handleStartDateChange}
@@ -113,6 +114,7 @@ const CityForm: React.FC<CityFormProps> = ({ onSubmit }) => {
                     <div>
                         <label className='mr-2'>Fin :</label>
                         <input 
+                            required
                             type='date'
                             value={endDate}
                             onChange={handleEndDateChange}

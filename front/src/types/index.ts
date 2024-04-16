@@ -143,3 +143,30 @@ interface Geometry {
     time: number
     translated: boolean
   }
+
+interface EventDetail {
+  dates: {
+    start: {
+      localDate: string 
+    }
+  }
+  images: [
+    {
+      url: string
+    }
+  ]
+  name: string
+  description: string
+  _embedded: {
+    venues: [
+      {
+        address: {
+          line1: string 
+        }
+        city: {name: string}
+        country: {name: string}
+        postalCode: string
+      }
+    ]
+  }
+}
