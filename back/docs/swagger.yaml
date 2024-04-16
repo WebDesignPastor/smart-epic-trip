@@ -144,41 +144,11 @@ paths:
       summary: Sign up
       tags:
       - accounts
-  /users/{id}:
-    delete:
-      consumes:
-      - application/json
-      description: delete
-      parameters:
-      - description: Account ID to delete
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "204":
-          description: No Content
-        "422":
-          description: Unprocessable Entity
-          schema:
-            $ref: '#/definitions/utils.Error'
-      security:
-      - BearerAuth: []
-      summary: Delete
-      tags:
-      - accounts
     put:
       consumes:
       - application/json
       description: update
       parameters:
-      - description: Account ID to update
-        in: path
-        name: id
-        required: true
-        type: integer
       - description: Request body
         in: body
         name: body
@@ -199,6 +169,25 @@ paths:
       security:
       - BearerAuth: []
       summary: Update
+      tags:
+      - accounts
+  /users/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/utils.Error'
+      security:
+      - BearerAuth: []
+      summary: Delete
       tags:
       - accounts
   /users/login:

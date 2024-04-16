@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"
 import { useDispatch } from "react-redux"
-import { addWaypoint, removeWaypoint } from "../slices/store"
+import { removeWaypoint } from "../slices/store"
 import GoogleTripCard from "./GoogleTripCard"
 import TicketMasterTripCard from "./TicketMasterTripCard"
 
@@ -106,7 +106,7 @@ const TripCard: React.FC<Props> = ({content, tripDetails, setTripDetails, waypoi
             {content.type === 'ticketmaster' && <TicketMasterTripCard content={content} photo={photo} fullAddress={fullAddress} />}
             {!content.type && 
                 <div className="flex flex-col w-full p-2">
-                    <h3 className="m-2 text-lg flex justify-center">{content.name}<strong></strong></h3>
+                    <h3 className="m-2 text-lg flex justify-center">{content.name}</h3>
                 </div>
             }
         </div>

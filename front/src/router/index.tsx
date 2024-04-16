@@ -3,6 +3,7 @@ import Home from "../pages/Home"
 import Map from "../pages/Map"
 import Login from "../pages/Login"
 import Signup from "../pages/Signup"
+import Profile from "../pages/Profile"
 
 
 export const router = createBrowserRouter([
@@ -15,13 +16,15 @@ export const router = createBrowserRouter([
         element: <Map />
     },
     {
-        path: "/user/login",
+        path: "/login",
         element: <Login />
     },
     {
-        path: "/user/signup",
+        path: "/signup",
         element: <Signup />
+    },
+    {
+        path: "/profile",
+        element: <Profile />
     }
-
-
 ])

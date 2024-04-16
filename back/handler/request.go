@@ -68,7 +68,7 @@ type newTripRequest struct {
 		Arrival       string    `json:"arrival" validate:"required"`
 		DepartureDate time.Time `json:"departureDate" validate:"required"`
 		ArrivalDate   time.Time `json:"arrivalDate" validate:"required"`
-		UserId        uint      `json:"user_id" validate:"required"`
+		UserId        uint      `json:"user_id"`
 	} `json:"trip"`
 	Places []struct {
 		Name        string `json:"name" validate:"required"`
