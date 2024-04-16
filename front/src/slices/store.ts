@@ -132,10 +132,16 @@ const appSlice = createSlice({
                 ...state,
                 user: {token: action.payload, isAuth: true}
             }
+        },
+        logout: (state) => {
+            return {
+                ...state, 
+                user: {token: '', isAuth: false}
+            }
         }
     }
     
 })
 
-export const {setTrip, setOrigin, setDestination, addWaypoint, addWaypointsDetails, removeWaypoint, setArrivlaDate, setDepartureDate, setUserToken} = appSlice.actions
+export const {logout, setTrip, setOrigin, setDestination, addWaypoint, addWaypointsDetails, removeWaypoint, setArrivlaDate, setDepartureDate, setUserToken} = appSlice.actions
 export default appSlice.reducer

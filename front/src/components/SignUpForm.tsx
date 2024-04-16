@@ -38,12 +38,10 @@ const SignUpForm: React.FC = () => {
 
       if (response.ok) {
         console.log('Inscription réussie !');
-        console.log(userData);
-        
         setEmail('');
         setUsername('');
         setPassword('');
-        navigate('/');
+        navigate('/login');
       } else {
         console.error('Erreur lors de l\'inscription');
       }
