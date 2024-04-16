@@ -1,0 +1,21 @@
+meta {
+  name: Create Trip
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:8080/api/trips/
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "trip": {
+      "departure": "Langueux",
+      "arrival": "Tregastel",
+      "user_id": 1
+    }
+  }
+}

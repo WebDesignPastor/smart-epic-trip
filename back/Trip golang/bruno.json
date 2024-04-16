@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "Trip golang",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}

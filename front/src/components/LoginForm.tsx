@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
+import { useNavigate } from "react-router-dom";
 import bcrypt from 'bcryptjs';
-import { useNavigate } from 'react-router-dom';
 
 const LoginForm: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -11,6 +11,7 @@ const LoginForm: React.FC = () => {
   const navigateToSignup = () => {
     navigate('/signup')
   }
+  const [token, setToken] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,10 +35,14 @@ const LoginForm: React.FC = () => {
       });
       console.log(response.body)
 
+      const data = await response.json();
+
       if (response.ok) {
         console.log('Connexion réussie !');
         setEmail('');
         setPassword('');
+        setToken(data.token);
+        navigate('/');
       } else {
         console.error('Erreur lors de la connexion');
       }

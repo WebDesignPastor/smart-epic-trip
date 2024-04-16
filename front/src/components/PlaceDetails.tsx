@@ -57,9 +57,9 @@ const PlaceDetails: React.FC<Props> = ({content, setIsShowingDetails, addWaypoin
     }
 
     return (
-        <div className="h-full w-full bg-neutral-700 flex flex-col items-center px-3">
+        <div className="h-full w-full bg-neutral-700 flex flex-col items-center px-3 pt-2">
             <div className="w-full bg-gray-100 min-h-16 flex justify-center items-center flex-col rounded-lg mb-4 relative md:w-auto">
-                <div className="absolute top-0 right-0 mt-1 mr-1">
+                <div className="absolute top-0 left-0 z-10 sm:right-0 mt-1 mr-1 ml-1">
                     <button onClick={handleCloseBtn} type="button" className="bg-white rounded-md p-2 inline-flex items-center justify-center text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500">
                         <span className="sr-only">Close menu</span>
                         <svg className="h-3 w-3 flex flex-row" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -67,7 +67,6 @@ const PlaceDetails: React.FC<Props> = ({content, setIsShowingDetails, addWaypoin
                         </svg>
                     </button>
                 </div>
-
 
                 {content ?
                     <div className="max-w-sm rounded overflow-hidden shadow-lg">
@@ -99,7 +98,7 @@ const PlaceDetails: React.FC<Props> = ({content, setIsShowingDetails, addWaypoin
                     {eventContent.images &&
                         <img src={photo} className="w-full h-72 object-center object-cover"/>
                     }
-                    <div className="px-6 py-4 relative">
+                    <div className="sm:px-6 sm:py-4 p-1 flex sm:block flex-col sm:relative justify-around">
                         <div className="flex flex-row justify-between">
                             <div className="font-bold text-xl mb-2">{eventContent.name}</div>
                         </div>

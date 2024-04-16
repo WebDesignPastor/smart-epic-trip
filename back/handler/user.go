@@ -10,6 +10,17 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+// ListAccounts lists all existing accounts
+//
+//	@Summary      List accounts
+//	@Description  get accounts
+//	@Tags         accounts
+//	@Accept       json
+//	@Produce      json
+//	@Security     BearerAuth
+//	@Success      200  {array}   model.User
+//	@Failure      422  {object}  utils.Error
+//	@Router       /users [get]
 func (h *Handler) GetAll(c echo.Context) error {
 	var userResponses []model.User
 
@@ -24,6 +35,17 @@ func (h *Handler) GetAll(c echo.Context) error {
 	return c.JSON(http.StatusOK, userResponses)
 }
 
+// SignUp
+//
+//	@Summary      Sign up
+//	@Description  sign up
+//	@Tags         accounts
+//	@Accept       json
+//	@Param        body   body   handler.userRegisterRequest   true   "Request body"
+//	@Produce      json
+//	@Success      201  {object}   handler.userResponse
+//	@Failure      422  {object}  utils.Error
+//	@Router       /users [post]
 func (h *Handler) SignUp(c echo.Context) error {
 	var u model.User
 	req := &userRegisterRequest{}
@@ -43,6 +65,17 @@ func (h *Handler) SignUp(c echo.Context) error {
 	return c.JSON(http.StatusCreated, newUserResponse(&u, t))
 }
 
+// Login
+//
+//	@Summary      Login
+//	@Description  login
+//	@Tags         accounts
+//	@Accept       json
+//	@Param        body   body   handler.userLoginRequest   true   "Request body"
+//	@Produce      json
+//	@Success      201  {object}   handler.userResponse
+//	@Failure      422  {object}  utils.Error
+//	@Router       /users/login [post]
 func (h *Handler) Login(c echo.Context) error {
 	req := &userLoginRequest{}
 	if err := req.bind(c); err != nil {
@@ -64,6 +97,19 @@ func (h *Handler) Login(c echo.Context) error {
 	return c.JSON(http.StatusOK, newUserResponse(u, t))
 }
 
+// Update
+//
+//	@Summary      Update
+//	@Description  update
+//	@Tags         accounts
+//	@Accept       json
+//	@Param        id     path    integer   true        "Account ID to update"
+//	@Param        body   body   handler.userUpdateRequest   true   "Request body"
+//	@Produce      json
+//	@Security     BearerAuth
+//	@Success      201  {object}   handler.userResponse
+//	@Failure      422  {object}  utils.Error
+//	@Router       /users/{id} [put]
 func (h *Handler) UpdateUser(c echo.Context) error {
 	p := c.Param("id") // get id from request param
 	id, err := strconv.Atoi(p)
@@ -113,6 +159,18 @@ func (h *Handler) UpdateUser(c echo.Context) error {
 	return c.JSON(http.StatusOK, updateUserResponse(u))
 }
 
+// Delete
+//
+//	@Summary      Delete
+//	@Description  delete
+//	@Tags         accounts
+//	@Accept       json
+//	@Produce      json
+//	@Param        id     path    integer   true        "Account ID to delete"
+//	@Security     BearerAuth
+//	@Success      204
+//	@Failure      422  {object}  utils.Error
+//	@Router       /users/{id} [delete]
 func (h *Handler) DeleteUser(c echo.Context) error {
 
 	p := c.QueryParam("id")
