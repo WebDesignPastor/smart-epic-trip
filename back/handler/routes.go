@@ -32,8 +32,6 @@ func (h *Handler) Register(v1 *echo.Group) {
 	t.GET("", h.GetAllByUser)
 	t.GET("/:id", h.GetTrip)
 	t.POST("", h.saveTrip)
-	t.PUT("/:id", h.UpdateTrip)
-	t.DELETE("/:id", h.DeleteTrip)
 
 	// Place routes
 	p := v1.Group("/places")
