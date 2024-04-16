@@ -346,7 +346,7 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
                         <TripDetails waypointsDetails={waypointsDetails} setWaypointsDetails={setWaypointsDetails} />
                     }
                 </div>
-                <div className="w-full sm:w-2/3 h-1/2 sm:h-full flex">
+                <div className="w-full flex col-start-5 col-end-13">
                     {directionsOptions ?
                             <GoogleMap
                             mapContainerStyle={style}

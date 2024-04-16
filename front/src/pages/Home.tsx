@@ -1,8 +1,6 @@
 // Home.tsx
 import React from 'react';
 import CityForm from '../components/CityForm';
-import LoginForm from '../components/LoginForm';
-import SignUpForm from '../components/SignUpForm';
 import Nav from '../components/Nav';
 
 const Home: React.FC = () => {
