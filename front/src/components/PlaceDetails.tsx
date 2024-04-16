@@ -38,6 +38,7 @@ const PlaceDetails: React.FC<Props> = ({content, setIsShowingDetails, addWaypoin
             }
             setFullAddress(newFullAddress)
         } else if(eventContent && !isGoogleMapResult){
+            console.log(eventContent)
             let newFullAddress = `${eventContent._embedded.venues[0].address.line1} ${eventContent._embedded.venues[0].city.name} ${eventContent._embedded.venues[0].postalCode} ${eventContent._embedded.venues[0].country.name}`
             setFullAddress(newFullAddress)
             setPhoto(eventContent.images[0].url)
@@ -48,8 +49,14 @@ const PlaceDetails: React.FC<Props> = ({content, setIsShowingDetails, addWaypoin
         setIsShowingDetails(false)
     }
 
-    const HandleAddBtn = (item: PlaceDetail) => {
-        addWaypoints(item)
+    const HandleAddBtn = (item: PlaceDetail | null | undefined, event: EventDetail | null | undefined) => {
+        if(item) {
+            addWaypoints(item, null)
+        }
+
+        if(event) {
+            addWaypoints(null, event)
+        }
     }
 
     return (
@@ -86,7 +93,7 @@ const PlaceDetails: React.FC<Props> = ({content, setIsShowingDetails, addWaypoin
                             <a href={`tel:${content.international_phone_number}`}><strong>Tel: </strong>{content.international_phone_number}</a>
                         </div>
                         <div className="flex justify-center items-center mb-4 ">
-                            <button onClick={() => HandleAddBtn(content)} className="bg-[#86A873] hover:bg-gray-100 duration-300 transition-duration: 300ms text-gray-800 font-semibold py-2 px-4 border rounded-full shadow w-[90%]">Ajouter au trip</button>
+                            <button onClick={() => HandleAddBtn(content, null)} className="bg-[#86A873] hover:bg-gray-100 duration-300 transition-duration: 300ms text-gray-800 font-semibold py-2 px-4 border rounded-full shadow w-[90%]">Ajouter au trip</button>
                         </div>
                     </div>
                     :
@@ -103,7 +110,7 @@ const PlaceDetails: React.FC<Props> = ({content, setIsShowingDetails, addWaypoin
                         <p className="text-gray-700 text-base"><strong className="text-black">Dates: </strong>{eventContent.dates.start.localDate}</p>
                     </div>
                     <div className="flex justify-center items-center mb-4 ">
-                            <button className="bg-[#86A873] hover:bg-gray-100 duration-300 transition-duration: 300ms text-gray-800 font-semibold py-2 px-4 border rounded-full shadow w-[90%]">Ajouter au trip</button>
+                            <button onClick={() => HandleAddBtn(null, eventContent)} className="bg-[#86A873] hover:bg-gray-100 duration-300 transition-duration: 300ms text-gray-800 font-semibold py-2 px-4 border rounded-full shadow w-[90%]">Ajouter au trip</button>
                     </div>
                     </div>
                 }

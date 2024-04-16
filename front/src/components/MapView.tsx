@@ -277,30 +277,57 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
         }
     }
 
-    const addWaypoints = (item: PlaceDetail) => {
+    const addWaypoints = (item: PlaceDetail | null | undefined, event: EventDetail | null | undefined) => {
         if(directionsOptions) {
-            let newWaypoint = {
-                place_id: item.place_id,
-                dir: {
-                    location: {lat: item.geometry.location.lat, lng: item.geometry.location.lng}, stopover: true
-                }
-            }
             let currentDirectionsOptions = JSON.parse(JSON.stringify(directionsOptions))
-            let waypointDetails = {
-                name: item.name,
-                address_components: item?.address_components,
-                photos: item?.photos,
-                phone_number: item?.international_phone_number,
-                rating: item?.rating,
-                place_id: item.place_id
+            let newWaypointCollection = []
+            if(item) {
+                let newWaypoint = {
+                    place_id: item.place_id,
+                    dir: {
+                        location: {lat: item.geometry.location.lat, lng: item.geometry.location.lng}, stopover: true
+                    }
+                }
+                let waypointDetails = {
+                    name: item.name,
+                    address_components: item?.address_components,
+                    photos: item?.photos,
+                    phone_number: item?.international_phone_number,
+                    rating: item?.rating,
+                    place_id: item.place_id,
+                    type: 'google'
+                }
+                newWaypointCollection = [...waypointsDetails, waypointDetails]
+                currentDirectionsOptions.waypoints!.push(newWaypoint.dir)
+                dispatch(addWaypoint(newWaypoint))
+                dispatch(addWaypointsDetails(waypointDetails))
+                calculateDirections(currentDirectionsOptions, center)
+                setIsShowingDetails(false)
+                setWaypointsDetails(newWaypointCollection)
             }
-            let newWaypointCollection = [...waypointsDetails, waypointDetails]
-            setWaypointsDetails(newWaypointCollection)
-            currentDirectionsOptions.waypoints!.push(newWaypoint.dir)
-            dispatch(addWaypoint(newWaypoint))
-            dispatch(addWaypointsDetails(waypointDetails))
-            calculateDirections(currentDirectionsOptions, center)
-            setIsShowingDetails(false)
+
+            if(event) {
+                let newWaypoint = {
+                    event_id: event.id,
+                    dir: {
+                        location: {lat: Number(event._embedded.venues[0].location.latitude), lng: Number(event._embedded.venues[0].location.longitude)}, stopover: true
+                    }
+                }
+                let waypointDetails = {
+                    name: event.name,
+                    event_id: event.id,
+                    images: event.images[0].url,
+                    date: event.dates.start.localDate,
+                    type: 'tickermaster'
+                }
+                newWaypointCollection = [...waypointsDetails, waypointDetails]
+                currentDirectionsOptions.waypoints!.push(newWaypoint.dir)
+                dispatch(addWaypoint(newWaypoint))
+                dispatch(addWaypointsDetails(waypointDetails))
+                calculateDirections(currentDirectionsOptions, center)
+                setIsShowingDetails(false)
+                setWaypointsDetails(newWaypointCollection)
+            }
         }
     }
 

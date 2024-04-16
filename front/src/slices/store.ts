@@ -16,7 +16,8 @@ export interface Dir {
 }
 
 export interface Waypoints {
-    place_id: string
+    place_id?: string
+    event_id?: string
     dir: Dir
 }
 
