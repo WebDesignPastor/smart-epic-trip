@@ -2,7 +2,6 @@ package handler
 
 import (
 	"net/http"
-	"strconv"
 
 	"github.com/EpitechMscProPromo2025/T-WEB-800-REN_8/model"
 	"github.com/EpitechMscProPromo2025/T-WEB-800-REN_8/router/middleware"
@@ -93,7 +92,6 @@ func (h *Handler) Login(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
-
 	return c.JSON(http.StatusOK, newUserResponse(u, t))
 }
 
@@ -103,30 +101,20 @@ func (h *Handler) Login(c echo.Context) error {
 //	@Description  update
 //	@Tags         accounts
 //	@Accept       json
-//	@Param        id     path    integer   true        "Account ID to update"
 //	@Param        body   body   handler.userUpdateRequest   true   "Request body"
 //	@Produce      json
 //	@Security     BearerAuth
 //	@Success      201  {object}   handler.userResponse
 //	@Failure      422  {object}  utils.Error
-//	@Router       /users/{id} [put]
+//	@Router       /users [put]
 func (h *Handler) UpdateUser(c echo.Context) error {
-	p := c.Param("id") // get id from request param
-	id, err := strconv.Atoi(p)
-	if err != nil {
-		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
-	}
 	jwt_id, err := middleware.ExtractId(c) // get id from jwt
 	if err != nil {
 		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
 	}
 
-	if jwt_id != id { // check if jwt_id different from param id
-		return c.JSON(http.StatusForbidden, utils.AccessForbidden())
-	}
-
 	// Retrieve user by ID from the database
-	u, err := h.userStore.GetByID(uint(id))
+	u, err := h.userStore.GetByID(uint(jwt_id))
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
@@ -166,29 +154,18 @@ func (h *Handler) UpdateUser(c echo.Context) error {
 //	@Tags         accounts
 //	@Accept       json
 //	@Produce      json
-//	@Param        id     path    integer   true        "Account ID to delete"
 //	@Security     BearerAuth
 //	@Success      204
 //	@Failure      422  {object}  utils.Error
 //	@Router       /users/{id} [delete]
 func (h *Handler) DeleteUser(c echo.Context) error {
 
-	p := c.QueryParam("id")
-	id, err := strconv.Atoi(p)
-	if err != nil {
-		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
-	}
-
 	jwt_id, err := middleware.ExtractId(c) // get id from jwt
 	if err != nil {
 		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
 	}
 
-	if jwt_id != id { // check if jwt_id different from param id
-		return c.JSON(http.StatusForbidden, utils.AccessForbidden())
-	}
-
-	u, err := h.userStore.GetByID(uint(id))
+	u, err := h.userStore.GetByID(uint(jwt_id))
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
@@ -201,5 +178,4 @@ func (h *Handler) DeleteUser(c echo.Context) error {
 	}
 
 	return c.NoContent(http.StatusNoContent)
-
 }
