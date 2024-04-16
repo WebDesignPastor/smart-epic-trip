@@ -338,9 +338,7 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
             isLoading={isLoading} setIsLoading={setIsLoading} isHotelsSearching={isHotelsSearching} setHotelsSearching={setHotelsSearching}
             isBarsSearching={isBarsSearching} setBarsSearching={setBarsSearching} isRestaurantsSearching={isRestaurantsSearching} 
             setRestaurantsSearching={setRestaurantsSearching} handlePoi={handlePoi} isEventsSearching={isEventsSearching} setEventsSearching={setEventsSearching} />
-            <!--<div className="w-full h-full grid grid-rows-1 grid-cols-12 overflow-hidden">-->
-            <!--<div className="col-start-1 col-end-5">-->
-            <!-- setRestaurantsSearching={setRestaurantsSearching} setMarkers={setMarkers} markers={markers} /> -->
+
             <div className="w-full h-full overflow-hidden flex sm:flex-row flex-col-reverse">
                 <div className="w-full sm:w-1/3 h-1/2 sm:h-full  flex">
                     {isShowingDetails ?
