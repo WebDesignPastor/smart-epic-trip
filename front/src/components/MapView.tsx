@@ -29,9 +29,13 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
 
     const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY
     const apiUrl = import.meta.env.VITE_API_URL
+    const apiUserUrl = import.meta.env.VITE_USER_API_URL
     const directionsOptions = useSelector((state: RootState) => state.app.directionsOptions)
     const departureDate = useSelector((state: RootState) => state.app.startDate)
     const arrivalDate = useSelector((state: RootState) => state.app.endDate)
+    const baseTripDetails = useSelector((state: RootState) => state.app.tripDetails)
+    const fullWp = useSelector((state: RootState) => state.app.baseWaypoints)
+    const user = useSelector((state: RootState) => state.app.user)
     const dispatch = useDispatch()
     const defaultMapOptions = {
         fullscreenControl: false,
@@ -332,6 +336,37 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
         }
     }
 
+    const handleSaveTrip = async () => {
+        const tripToSave = {
+            departure: baseTripDetails[0].origin,
+            arrival: baseTripDetails[0].destination,
+            departureDate: departureDate,
+            arrivalDate: arrivalDate
+        }
+
+        let placesToSave: any[] = []
+        waypointsDetails.map((wp: any) => {
+            let wpData = fullWp.find((e) => e.place_id === wp.place_id)
+            placesToSave.push({
+                name: wp.name, 
+                GoogleApiId: wp.place_id,
+                latitude: wpData?.dir.location.lat,
+                longitude: wpData?.dir.location.lng
+            })
+        })
+
+        const completeObj = {
+            trip: tripToSave,
+            places: placesToSave
+        }
+
+        if(user.isAuth) {
+            const config = { headers: { Authorization: `Bearer ${user.token}` }}
+            const response = await axios.post(`${apiUserUrl}/trips`, completeObj, config)
+            console.log(response.data)
+        }
+    }
+
     return (
         <>  
             <MapOptions
@@ -343,7 +378,7 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
                     {isShowingDetails ?
                         <PlaceDetails content={placeDetails} setIsShowingDetails={setIsShowingDetails} addWaypoints={addWaypoints} isGoogleMapResult={isGoogleMapResult} eventContent={eventDetails} />
                     :
-                        <TripDetails waypointsDetails={waypointsDetails} setWaypointsDetails={setWaypointsDetails} />
+                        <TripDetails waypointsDetails={waypointsDetails} setWaypointsDetails={setWaypointsDetails} handleSaveTrip={handleSaveTrip} />
                     }
                 </div>
                 <div className="w-full flex col-start-5 col-end-13">

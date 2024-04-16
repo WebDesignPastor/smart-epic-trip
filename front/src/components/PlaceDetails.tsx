@@ -35,7 +35,6 @@ const PlaceDetails: React.FC<Props> = ({content, setIsShowingDetails, addWaypoin
             }
             setFullAddress(newFullAddress)
         } else if(eventContent && !isGoogleMapResult){
-            console.log(eventContent)
             let newFullAddress = `${eventContent._embedded.venues[0].address.line1} ${eventContent._embedded.venues[0].city.name} ${eventContent._embedded.venues[0].postalCode} ${eventContent._embedded.venues[0].country.name}`
             setFullAddress(newFullAddress)
             setPhoto(eventContent.images[0].url)

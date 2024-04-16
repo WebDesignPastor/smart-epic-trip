@@ -29,7 +29,7 @@ const UserProfile = () => {
         const config = {
             headers: { Authorization: `Bearer ${token}` }
         }
-        await axios.put(`${apiUserUrl}/users/1`, userData, config)
+        await axios.put(`${apiUserUrl}/users`, userData, config)
         .then((response) => {
             console.log(response.data)
         })
@@ -87,7 +87,7 @@ const UserProfile = () => {
                     </form>
                     <div>
                         <button type="submit" onClick={handleSubmit} className="w-full mb-2 flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Modifier</button>
-                        <button type="submit" onClick={handleLogout} className="w-full mb-4 flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">Se déconnecter</button>
+                        <button type="submit" onClick={handleLogout} className="w-full mb-4 flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">Se déconnecter</button>
                     </div>
                 </div>
             </div>
