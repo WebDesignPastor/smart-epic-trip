@@ -5,18 +5,25 @@ import (
 	"strconv"
 
 	"github.com/EpitechMscProPromo2025/T-WEB-800-REN_8/model"
+	"github.com/EpitechMscProPromo2025/T-WEB-800-REN_8/router/middleware"
 	"github.com/EpitechMscProPromo2025/T-WEB-800-REN_8/utils"
 	"github.com/labstack/echo/v4"
 )
 
 func (h *Handler) GetAllByUser(c echo.Context) error {
 	var req getAllTripsRequest
+
+	jwt_id, err := middleware.ExtractId(c) // get id from jwt
+	if err != nil {
+		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
+	}
+
 	if err := req.bind(c); err != nil {
 		return c.JSON(http.StatusBadRequest, utils.NewError(err))
 	}
 
 	// Retrieve all trips from the database for a User
-	trips, err := h.tripStore.GetAllByUser(req.UserId)
+	trips, err := h.tripStore.GetAllByUser(uint(jwt_id))
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
@@ -89,16 +96,16 @@ func (h *Handler) GetTrip(c echo.Context) error {
 	return c.JSON(http.StatusOK, trip)
 }
 
-func (h *Handler) CreateTrip(c echo.Context) error {
-	var t model.Trip
-	req := &newTripRequest{}
-	if err := req.bind(c, &t); err != nil {
-		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
-	}
-
-	if err := h.tripStore.Create(&t); err != nil {
-		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
-	}
-
-	return c.JSON(http.StatusCreated, newTripResponse(&t))
-}
+//func (h *Handler) CreateTrip(c echo.Context) error {
+//	var t model.Trip
+//	req := &newTripRequest{}
+//	if err := req.bind(c, &t); err != nil {
+//		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
+//	}
+//
+//	if err := h.tripStore.Create(&t); err != nil {
+//		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
+//	}
+//
+//	return c.JSON(http.StatusCreated, newTripResponse(&t))
+//}
