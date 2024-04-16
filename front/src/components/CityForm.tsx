@@ -67,7 +67,7 @@ const CityForm: React.FC<CityFormProps> = ({ onSubmit }) => {
     }
 
     return (
-        <div className="max-w-lg mx-auto my-10 p-6 bg-white shadow-md rounded-lg">
+        <div className="max-w-lg mx-auto my-10 p-6 bg-white shadow-2xl rounded-lg">
             <form className="space-y-4">
                 <div>
                     <label htmlFor="departure" className="block text-sm font-medium text-gray-700">Departure City:</label>
