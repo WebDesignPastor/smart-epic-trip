@@ -7,8 +7,6 @@ const SignUpForm: React.FC = () => {
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [token, setToken] = useState('');
-
   const navigate = useNavigate();
   const apiUserUrl = import.meta.env.VITE_USER_API_URL
 
@@ -38,16 +36,13 @@ const SignUpForm: React.FC = () => {
         body: JSON.stringify(userData)
       });
 
-      const data = await response.json()
-
-
-
       if (response.ok) {
         console.log('Inscription réussie !');
+        console.log(userData);
+        
         setEmail('');
         setUsername('');
         setPassword('');
-        setToken(data.token)
         navigate('/');
       } else {
         console.error('Erreur lors de l\'inscription');
