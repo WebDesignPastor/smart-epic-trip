@@ -21,7 +21,7 @@ func (h *Handler) Register(v1 *echo.Group) {
 		SigningKey: []byte("secret"),
 	}
 
-	u := v1.Group("/user")
+	u := v1.Group("/users")
 	// all route will using the jwt config will check for jwt
 	u.Use(echojwt.WithConfig(config))
 	u.GET("", h.GetAll)
@@ -29,11 +29,9 @@ func (h *Handler) Register(v1 *echo.Group) {
 
 	// Trip routes
 	t := v1.Group("/trips")
-	//t.GET("", h.getAllTrips)
+	t.GET("", h.GetAllByUser)
 	t.GET("/:id", h.GetTrip)
-	t.POST("", h.CreateTrip)
-	t.PUT("/:id", h.UpdateTrip)
-	t.DELETE("/:id", h.DeleteTrip)
+	t.POST("", h.saveTrip)
 
 	// Place routes
 	p := v1.Group("/places")

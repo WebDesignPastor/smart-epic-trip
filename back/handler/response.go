@@ -2,6 +2,7 @@ package handler
 
 import (
 	"github.com/EpitechMscProPromo2025/T-WEB-800-REN_8/model"
+	"time"
 )
 
 type userResponse struct {
@@ -15,13 +16,11 @@ type userResponse struct {
 
 type tripResponse struct {
 	Trip struct {
-		Departure string `json:"departure"`
-		Arrival   string `json:"arrival"`
-		UserID    uint   `json:"userID"`
-		User      struct {
-			Username string `json:"username"`
-			Email    string `json:"email"`
-		} `json:"user"`
+		Departure     string    `json:"departure"`
+		Arrival       string    `json:"arrival"`
+		DepartureDate time.Time `json:"departureDate"`
+		ArrivalDate   time.Time `json:"arrivalDate"`
+		UserId        uint      `json:"user_id"`
 	} `json:"trip"`
 }
 
@@ -54,9 +53,9 @@ func newTripResponse(t *model.Trip) *tripResponse {
 	r := new(tripResponse)
 	r.Trip.Departure = t.Departure
 	r.Trip.Arrival = t.Arrival
-	r.Trip.UserID = t.User.ID
-	r.Trip.User.Username = t.User.Username
-	r.Trip.User.Email = t.User.Email
+	r.Trip.UserId = t.UserId
+	r.Trip.DepartureDate = t.DepartureDate
+	r.Trip.ArrivalDate = t.ArrivalDate
 	return r
 }
 

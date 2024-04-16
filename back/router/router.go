@@ -4,10 +4,12 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
+	//"golang.org/x/crypto/acme/autocert"
 )
 
 func New() *echo.Echo {
 	e := echo.New()
+	//e.AutoTLSManager.Cache = autocert.DirCache("/var/www/.cache")
 	e.Logger.SetLevel(log.DEBUG)
 	e.Pre(middleware.RemoveTrailingSlash())
 	e.Use(middleware.Logger())

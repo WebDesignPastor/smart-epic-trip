@@ -1,6 +1,9 @@
 package handler
 
 import (
+	"errors"
+	"time"
+
 	"github.com/EpitechMscProPromo2025/T-WEB-800-REN_8/model"
 	"github.com/labstack/echo/v4"
 )
@@ -45,19 +48,42 @@ type userRegisterRequest struct {
 	} `json:"user"`
 }
 
+type getAllTripsRequest struct {
+	UserId uint `json:"user_id"`
+}
+
+func (r *getAllTripsRequest) bind(c echo.Context) error {
+	if err := c.Bind(r); err != nil {
+		return err
+	}
+	if r.UserId == 0 {
+		return errors.New("user_id parameter is required")
+	}
+	return nil
+}
+
 type newTripRequest struct {
 	Trip struct {
-		Departure string `json:"departure" validate:"required"`
-		Arrival   string `json:"arrival" validate:"required"`
-		UserID    uint   `json:"user_id" validate:"required"`
+		Departure     string    `json:"departure" validate:"required"`
+		Arrival       string    `json:"arrival" validate:"required"`
+		DepartureDate time.Time `json:"departureDate" validate:"required"`
+		ArrivalDate   time.Time `json:"arrivalDate" validate:"required"`
+		UserId        uint      `json:"user_id" validate:"required"`
 	} `json:"trip"`
+	Places []struct {
+		Name        string `json:"name" validate:"required"`
+		Latitude    string `json:"latitude" validate:"required"`
+		Longitude   string `json:"longitude" validate:"required"`
+		GoogleApiId string `json:"GoogleApiId" validate:"required"`
+	} `json:"places"`
 }
 
 type newPlaceRequest struct {
 	Place struct {
-		Name      string `json:"name" validate:"required"`
-		Latitude  string `json:"latitude" validate:"required"`
-		Longitude string `json:"longitude" validate:"required"`
+		Name        string `json:"name" validate:"required"`
+		Latitude    string `json:"latitude" validate:"required"`
+		Longitude   string `json:"longitude" validate:"required"`
+		GoogleApiId string `json:"GoogleApiId" validate:"required"`
 	} `json:"place"`
 }
 
@@ -70,8 +96,10 @@ func (r *newTripRequest) bind(c echo.Context, t *model.Trip) error {
 	}
 
 	t.Departure = r.Trip.Departure
+	t.DepartureDate = r.Trip.DepartureDate
 	t.Arrival = r.Trip.Arrival
-	t.UserID = r.Trip.UserID
+	t.ArrivalDate = r.Trip.ArrivalDate
+	t.UserId = r.Trip.UserId
 
 	return nil
 }
@@ -87,6 +115,7 @@ func (r *newPlaceRequest) bind(c echo.Context, p *model.Place) error {
 	p.Name = r.Place.Name
 	p.Longitude = r.Place.Longitude
 	p.Latitude = r.Place.Latitude
+	p.GoogleApiId = r.Place.GoogleApiId
 
 	return nil
 }

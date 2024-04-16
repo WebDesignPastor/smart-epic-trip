@@ -1,0 +1,44 @@
+meta {
+  name: Save Trip
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://localhost:8080/api/trips/
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "trip": {
+      "departure": "Marseille",
+      "arrival": "Nice",
+      "departureDate": "2024-04-15T10:00:00Z",
+      "arrivalDate": "2024-04-15T18:00:00Z",
+      "user_id": 1
+    },
+    "places": [
+      {
+        "name": "Place7",
+        "latitude": "latitude7",
+        "longitude": "longitude7",
+        "GoogleApiId": "123"
+      },
+      {
+        "name": "Place8",
+        "latitude": "latitude8",
+        "longitude": "longitude8",
+        "GoogleApiId": "456"
+      },
+      {
+        "name": "Place9",
+        "latitude": "latitude9",
+        "longitude": "longitude9",
+        "GoogleApiId": "789"
+      }
+    ]
+  }
+  
+}
