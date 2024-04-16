@@ -87,6 +87,7 @@ interface Geometry {
     images?: string
     date?: string
     type: string
+    address?: Array<any>
 }
   
   interface TripDetailsElement {

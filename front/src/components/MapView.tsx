@@ -318,7 +318,8 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
                     event_id: event.id,
                     images: event.images[0].url,
                     date: event.dates.start.localDate,
-                    type: 'tickermaster'
+                    address: event._embedded.venues,
+                    type: 'ticketmaster'
                 }
                 newWaypointCollection = [...waypointsDetails, waypointDetails]
                 currentDirectionsOptions.waypoints!.push(newWaypoint.dir)

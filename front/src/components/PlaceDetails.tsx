@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react"
-import { useSelector } from "react-redux"
-import { RootState } from "../redux"
 
 
 
@@ -18,7 +16,6 @@ const PlaceDetails: React.FC<Props> = ({content, setIsShowingDetails, addWaypoin
     const [photo, setPhoto] = useState('')
     const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY
     const [classList, setClassList] = useState('')
-    const fullWp = useSelector((state: RootState) => state.app)
     useEffect(() => {
         if(isGoogleMapResult && content) {
             let newFullAddress = ''

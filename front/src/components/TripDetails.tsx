@@ -21,15 +21,30 @@ const TripDetails: React.FC<Props> = ({waypointsDetails, setWaypointsDetails}) =
             if(waypointsDetails.length > 0) {
                 let newArray: TripDetailsElement[] = []
                 waypointsDetails.map((wp: WaypointsDetails) => {
-                    newArray.push({content: 
-                        {
-                            name: wp.name, 
-                            address_components: wp.address_components,
-                            photos: wp?.photos,
-                            international_phone_number: wp?.international_phone_number,
-                            rating: wp?.rating,
-                            place_id: wp?.place_id
-                        }})
+                    if(wp.type === 'google') {
+                        newArray.push({content: 
+                            {
+                                name: wp.name, 
+                                address_components: wp.address_components,
+                                photos: wp?.photos,
+                                international_phone_number: wp?.international_phone_number,
+                                rating: wp?.rating,
+                                place_id: wp?.place_id,
+                                type: wp.type
+                            }}
+                        )
+                    } else if(wp.type === 'ticketmaster') {
+                        newArray.push({content: 
+                            {
+                                name: wp.name, 
+                                images: wp.images,
+                                event_id: wp.event_id,
+                                address: wp.address,
+                                date: wp.date,
+                                type: wp.type
+                            }}
+                        )
+                    }
                 })
                 let fullArray = [
                     ...card.slice(0, 1),
@@ -49,7 +64,7 @@ const TripDetails: React.FC<Props> = ({waypointsDetails, setWaypointsDetails}) =
             <div className="w-full px-3 h-[90%] overflow-y-scroll no-scrollbar">
                 {tripDetails && tripDetails.map((e, index: number) => {
                     return (
-                        <TripCard content={e.content} key={e.place_id ? e.place_id : index} tripDetails={tripDetails} setTripDetails={setTripDetails} waypointsDetails={waypointsDetails} setWaipointsDetails={setWaypointsDetails} />
+                        <TripCard content={e.content} key={e.place_id ? e.place_id : (e.event_id ? e.event_id : index)} tripDetails={tripDetails} setTripDetails={setTripDetails} waypointsDetails={waypointsDetails} setWaipointsDetails={setWaypointsDetails} />
                     )
                 })}
             </div>
