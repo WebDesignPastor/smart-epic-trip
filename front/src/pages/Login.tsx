@@ -1,10 +1,12 @@
 import React from 'react';
 import LoginForm from '../components/LoginForm';
+import Nav from '../components/Nav';
 
 const Login: React.FC = () => {
 
     return (
-        <div className='h-screen items-center flex justify-center'>
+        <div className='flex flex-col items-center h-screen'>
+            <Nav />
             <LoginForm />
         </div>
     );

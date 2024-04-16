@@ -30,6 +30,11 @@ export interface DirectionsOptions {
     optimizeWaypoints: Boolean
 }
 
+interface User {
+    token: string
+    isAuth: boolean
+}
+
 export interface InitialState {
     tripDetails: TripDetails[]
     directionsOptions: DirectionsOptions
@@ -37,6 +42,7 @@ export interface InitialState {
     baseWaypoints: Waypoints[]
     startDate: string 
     endDate: string
+    user: User
 }
 
 const initialState: InitialState = {
@@ -52,7 +58,11 @@ const initialState: InitialState = {
     waypointsDetails: [],
     baseWaypoints: [],
     startDate: '',
-    endDate: ''
+    endDate: '',
+    user: {
+        token: '',
+        isAuth: false
+    }
 }
 
 const appSlice = createSlice({
@@ -116,10 +126,22 @@ const appSlice = createSlice({
                 ...state,
                 endDate: action.payload
             }
+        },
+        setUserToken: (state, action: PayloadAction<string>) => {
+            return {
+                ...state,
+                user: {token: action.payload, isAuth: true}
+            }
+        },
+        logout: (state) => {
+            return {
+                ...state, 
+                user: {token: '', isAuth: false}
+            }
         }
     }
     
 })
 
-export const {setTrip, setOrigin, setDestination, addWaypoint, addWaypointsDetails, removeWaypoint, setArrivlaDate, setDepartureDate} = appSlice.actions
+export const {logout, setTrip, setOrigin, setDestination, addWaypoint, addWaypointsDetails, removeWaypoint, setArrivlaDate, setDepartureDate, setUserToken} = appSlice.actions
 export default appSlice.reducer

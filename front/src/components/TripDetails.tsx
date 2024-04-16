@@ -6,11 +6,13 @@ import React, { useEffect, useState } from "react"
 interface Props {
     waypointsDetails: WaypointsDetails[]
     setWaypointsDetails: Function
+    handleSaveTrip: () => void
 }
 
-const TripDetails: React.FC<Props> = ({waypointsDetails, setWaypointsDetails}) => {
+const TripDetails: React.FC<Props> = ({waypointsDetails, setWaypointsDetails, handleSaveTrip}) => {
     
     const baseTrip = useSelector((state: RootState) => state.app.tripDetails)
+    const user = useSelector((state: RootState) => state.app.user)
     const [tripDetails, setTripDetails] = useState<any[]>()
 
     useEffect(() => {
@@ -68,6 +70,13 @@ const TripDetails: React.FC<Props> = ({waypointsDetails, setWaypointsDetails}) =
                     )
                 })}
             </div>
+            {user.isAuth &&
+                <div className="w-full px-3 mt-4">
+                    <div className="w-full p-2 bg-gray-200 shadow-lg mb-4 rounded-lg">
+                        <h3 className="m-2 text-lg flex justify-center cursor-pointer" onClick={handleSaveTrip}>Sauvegarder</h3>
+                    </div>
+                </div>
+            }
         </div>  
     )
 }

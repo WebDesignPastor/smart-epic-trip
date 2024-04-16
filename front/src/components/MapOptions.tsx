@@ -1,4 +1,7 @@
 import React from "react"
+import { useSelector } from "react-redux"
+import { useNavigate } from "react-router-dom"
+import { RootState } from "../redux"
 
 interface Props {
     isLoading: boolean,
@@ -26,6 +29,15 @@ const MapOptions: React.FC<Props> = ({
     isEventsSearching
 }) => {
 
+    const isUserAuth = useSelector((state: RootState) => state.app.user.isAuth)
+    const navigate = useNavigate()
+    const navigateToHome = () => {
+        navigate('/')
+    }
+    const navigateToLogin = () => {
+        navigate('/login')
+    }
+
     const handleSearchBars = () => {
         setBarsSearching(!isBarsSearching)
     }
@@ -47,9 +59,9 @@ const MapOptions: React.FC<Props> = ({
     }
 
     return (
-        <nav className="relative flex w-full flex-nowrap items-center justify-center bg-neutral-700 py-2 shadow-dark-mild">
+        <nav className="relative flex w-full flex-nowrap items-center justify-between bg-neutral-700 py-2 shadow-dark-mild max-h-14">
             <div>
-                {/* logo */}
+                <h2 className="text-white ml-6 cursor-pointer" onClick={navigateToHome}>Epic Road Trip</h2>
             </div>
             <div className="inline-flex rounded-md shadow-sm" role="group">
                 <button 
@@ -94,10 +106,17 @@ const MapOptions: React.FC<Props> = ({
                     onClick={handleSearchEvents}>
                     Evenements
                 </button>
+                <button onClick={handleSearchPoi} type="button" className="ml-2 px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg">
+                        Rechercher
+                </button>
             </div>
-            <button onClick={handleSearchPoi} type="button" className="ml-2 px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg">
-                    Rechercher
-            </button>
+            <div>
+                {isUserAuth ?
+                    <h2 className="text-white mr-6 cursor-pointer" onClick={navigateToLogin}>Profile</h2>
+                :
+                    <h2 className="text-white mr-6 cursor-pointer" onClick={navigateToLogin}>Se connecter</h2>
+                }
+            </div>
         </nav>
     )
 }
