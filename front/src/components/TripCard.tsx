@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"
 import { useDispatch } from "react-redux"
-import { addWaypoint, removeWaypoint } from "../slices/store"
+import { removeWaypoint } from "../slices/store"
 import GoogleTripCard from "./GoogleTripCard"
 import TicketMasterTripCard from "./TicketMasterTripCard"
 

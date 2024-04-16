@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import bcrypt from 'bcryptjs';
-import Login from '../pages/Login';
 
 
 const SignUpForm: React.FC = () => {
@@ -9,12 +8,16 @@ const SignUpForm: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
+  const apiUserUrl = import.meta.env.VITE_USER_API_URL
+
+  const navigateToLogin = () => {
+    navigate('/login')
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const hashedPassword = bcrypt.hashSync(password, 10);
-
 
     const userData = {
       user: {
@@ -25,7 +28,7 @@ const SignUpForm: React.FC = () => {
     };
 
     try {
-      const response = await fetch('http://localhost:8080/api/users/', {
+      const response = await fetch(`${apiUserUrl}/api/users`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -89,6 +92,7 @@ const SignUpForm: React.FC = () => {
             required
           />
         </div>
+        <p className='text-sm'>Déjà un compte ? <span className='text-sky-700 underline cursor-pointer' onClick={navigateToLogin}>Se connecter</span></p>
         <button type="submit" className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">S'inscrire</button>
       </form>
     </div>
