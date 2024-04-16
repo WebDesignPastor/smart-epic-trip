@@ -1,11 +1,6 @@
 import React from "react"
-import { Markers } from "./MapView"
-import { checkIfArrayHasValue, sortArrayByPropertyType } from "../utils/array"
 
 interface Props {
-    searchHotel: () => void,
-    searhBars: () => void,
-    searhRestaurants: () => void,
     isLoading: boolean,
     setIsLoading: Function
     isBarsSearching: boolean
@@ -14,63 +9,41 @@ interface Props {
     setHotelsSearching: Function
     isRestaurantsSearching: boolean
     setRestaurantsSearching: Function
-    setMarkers: Function
-    markers: Markers[]
+    handlePoi: Function
+    setEventsSearching: Function
+    isEventsSearching: boolean
 }
 
 const MapOptions: React.FC<Props> = ({ 
-    searchHotel, 
-    searhBars, 
-    searhRestaurants, 
-    isLoading, 
-    setIsLoading, 
+    handlePoi,
     isBarsSearching, 
     setBarsSearching, 
     isHotelsSearching,
     setHotelsSearching,
     isRestaurantsSearching,
     setRestaurantsSearching,
-    setMarkers,
-    markers
+    setEventsSearching,
+    isEventsSearching
 }) => {
 
     const handleSearchBars = () => {
-        if(!checkIfArrayHasValue(markers, 'bars')) {
-            setIsLoading(!isLoading)
-            searhBars()
-            setIsLoading(!isLoading)
-        } else {
-            let newMarkersCollection = markers
-            let newArr = sortArrayByPropertyType(newMarkersCollection, 'bars')
-            setMarkers(newArr)
-        }
         setBarsSearching(!isBarsSearching)
     }
 
     const handleSearchHotels = () => {
-        if(!checkIfArrayHasValue(markers, 'hotel')) {
-            setIsLoading(!isLoading)
-            searchHotel()
-            setIsLoading(!isLoading)
-        } else {
-            let newMarkersCollection = markers
-            let newArr = sortArrayByPropertyType(newMarkersCollection, 'hotel')
-            setMarkers(newArr)
-        }
         setHotelsSearching(!isHotelsSearching)
     }
 
     const handleSearchRestaurants = () => {
-        if(!checkIfArrayHasValue(markers, 'restaurant')) {
-            setIsLoading(!isLoading)
-            searhRestaurants()
-            setIsLoading(!isLoading)
-        } else {
-            let newMarkersCollection = markers
-            let newArr = sortArrayByPropertyType(newMarkersCollection, 'restaurant')
-            setMarkers(newArr)
-        }
         setRestaurantsSearching(!isRestaurantsSearching)
+    }
+
+    const handleSearchEvents = () => {
+        setEventsSearching(!isEventsSearching)
+    }
+
+    const handleSearchPoi = () => {
+        handlePoi()
     }
 
     return (
@@ -112,10 +85,19 @@ const MapOptions: React.FC<Props> = ({
                     onClick={handleSearchHotels}>
                     Hotels
                 </button>
-                <button type="button" className="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-e-lg">
+                <button type="button" className={isEventsSearching 
+                    ?
+                        "px-4 py-2 text-sm font-medium text-white bg-teal-400 border border-gray-200 rounded-e-lg"
+                    :
+                        "px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-e-lg"
+                    }
+                    onClick={handleSearchEvents}>
                     Evenements
                 </button>
             </div>
+            <button onClick={handleSearchPoi} type="button" className="ml-2 px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg">
+                    Rechercher
+            </button>
         </nav>
     )
 }

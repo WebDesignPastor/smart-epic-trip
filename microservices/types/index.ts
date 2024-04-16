@@ -83,3 +83,18 @@ interface GeocodeApiReqParams {
 interface PlaceDetailsRedParams {
   place_id: string
 }
+
+interface EventParams {
+  latlong: string
+  id?: string
+  keyword?: string
+  attrationId?: string
+  venuedId?: string
+  radius?: string
+  startDateTime?: Date | string
+  endDateTime?: Date | string
+  onsaleStartDateTime?: Date | string
+  onsaleEndDateTime?: Date | string
+  page?: number
+  size?: number
+}

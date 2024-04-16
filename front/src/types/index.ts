@@ -78,11 +78,16 @@ interface Geometry {
 
   interface WaypointsDetails {
     name: string
-    address_components: Array<any>
+    address_components?: Array<any>
     photos?: Array<any>
     international_phone_number?: string
     rating?: number
     place_id?: string
+    event_id?: string
+    images?: string
+    date?: string
+    type: string
+    address?: Array<any>
 }
   
   interface TripDetailsElement {
@@ -143,3 +148,35 @@ interface Geometry {
     time: number
     translated: boolean
   }
+
+interface EventDetail {
+  id: string
+  dates: {
+    start: {
+      localDate: string 
+    }
+  }
+  images: [
+    {
+      url: string
+    }
+  ]
+  name: string
+  description: string
+  _embedded: {
+    venues: [
+      {
+        address: {
+          line1: string 
+        }
+        city: {name: string}
+        country: {name: string}
+        postalCode: string
+        location: {
+          latitude: string
+          longitude: string
+        }
+      }
+    ]
+  }
+}

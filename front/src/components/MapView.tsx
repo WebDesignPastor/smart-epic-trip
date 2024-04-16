@@ -30,6 +30,8 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
     const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY
     const apiUrl = import.meta.env.VITE_API_URL
     const directionsOptions = useSelector((state: RootState) => state.app.directionsOptions)
+    const departureDate = useSelector((state: RootState) => state.app.startDate)
+    const arrivalDate = useSelector((state: RootState) => state.app.endDate)
     const dispatch = useDispatch()
     const defaultMapOptions = {
         fullscreenControl: false,
@@ -71,9 +73,12 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
     const [isBarsSearching, setBarsSearching] = useState(false)
     const [isHotelsSearching, setHotelsSearching] = useState(false)
     const [isRestaurantsSearching, setRestaurantsSearching] = useState(false)
-    const [placeDetails, setPlaceDetails] = useState<PlaceDetail>()
+    const [isEventsSearching, setEventsSearching] = useState(false)
+    const [placeDetails, setPlaceDetails] = useState<PlaceDetail | null>(null)
     const [isShowingDetails, setIsShowingDetails] = useState(false)
     const [waypointsDetails, setWaypointsDetails] = useState<any>([])
+    const [isGoogleMapResult, setGoogleMapResult] = useState(false)
+    const [eventDetails, setEventDetails] = useState<EventDetail | null>(null)
     
     const { isLoaded } = useJsApiLoader({ googleMapsApiKey })
 
@@ -85,64 +90,126 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
     const directionService = new google.maps.DirectionsService()
 
     const createCustomMarker = (data: PlaceApiResResult[], type: string) => {
-        let newMarkerCollection: Markers[] = markers
-        data.map((res: PlaceApiResResult) => {
-            if(!newMarkerCollection.find((e:Markers) => e.id === res.place_id)) {
-                newMarkerCollection.push({lat: res.geometry.location.lat, lng: res.geometry.location.lng, id: res.place_id, type: type})
-            }
-        })
-        setMarkers(newMarkerCollection)
-        setIsLoading(false)
+        if(type !== 'events') {
+            let newMarkerCollection: Markers[] = []
+            data.map((res: PlaceApiResResult) => {
+                if(!newMarkerCollection.find((e:Markers) => e.id === res.place_id)) {
+                    newMarkerCollection.push({lat: res.geometry.location.lat, lng: res.geometry.location.lng, id: res.place_id, type: type})
+                }
+            })
+            return newMarkerCollection
+        } else {
+            let newMarkerCollection: Markers[] = []
+            data.map((res: any) => {
+                if(!newMarkerCollection.find((e:Markers) => e.id === res.place_id)) {
+                    newMarkerCollection.push({lat: Number(res._embedded.venues[0].location.latitude), lng: Number(res._embedded.venues[0].location.longitude), id: res.id, type: type})
+                }
+            })
+            return newMarkerCollection
+        }
     }
 
-    const onMarkerClick = async (index: string) => {
+    const onMarkerClick = async (index: string, type: string) => {
         setIsLoading(true)
-        const details = await axios.get(`${apiUrl}/details/${index}`)
-        let detailsResult = details.data.result 
-        setPlaceDetails(detailsResult)
+        if(type !== 'events') {
+            const details = await axios.get(`${apiUrl}/details/${index}`)
+            let detailsResult = details.data.result 
+            setGoogleMapResult(true)
+            setEventDetails(null)
+            setPlaceDetails(detailsResult)
+        } else {
+            setGoogleMapResult(false)
+            const details = await axios.get(`${apiUrl}/events/${index}`)
+            setEventDetails(details.data)
+            setPlaceDetails(null)
+        }
         setIsShowingDetails(true)
         setIsLoading(false)
-        // donc besoin du place id de l'endroit
     }
 
     const searchHotel = async () => {
-        setIsLoading(true)
         const centerCoord = mapRef.current?.getCenter()
         const hotel = await axios.get(`${apiUrl}/hotels/all?location=${centerCoord?.lat()},${centerCoord?.lng()}&radius=${mapRadius}`)
         if(hotel.data.results) {
             const results = hotel.data.results
-            createCustomMarker(results, 'hotel')
+            let toReturn = createCustomMarker(results, 'hotel')
+            return toReturn
         }
     }
 
     const searhBars = async () => {
-        setIsLoading(true)
         const centerCoord = mapRef.current?.getCenter()
         const bars = await axios.get(`${apiUrl}/bars/all?location=${centerCoord?.lat()},${centerCoord?.lng()}&radius=${mapRadius}`)
         if(bars.data.results) {
             const results = bars.data.results
-            createCustomMarker(results, 'bars')
+            let toReturn = createCustomMarker(results, 'bars')
+            return toReturn
         }
     }
 
     const searhRestaurants = async () => {
-        setIsLoading(true)
         const centerCoord = mapRef.current?.getCenter()
         const restaurant = await axios.get(`${apiUrl}/restaurants/all?location=${centerCoord?.lat()},${centerCoord?.lng()}&radius=${mapRadius}`)
-        if(restaurant.data.results) {
+        if(restaurant.data.results) { 
             const results = restaurant.data.results
-            createCustomMarker(results, 'restaurant')
+            let toReturn = createCustomMarker(results, 'restaurant')
+            return toReturn
         }
+    }
+
+    const searchEvents= async () => {
+        const centerCoord = mapRef.current?.getCenter()
+        const latlong = `${centerCoord?.lat()},${centerCoord?.lng()}`
+        const fullUrl = `${apiUrl}/events?latlong=${latlong}&radius=${Math.round(mapRadius/1000)}&startDateTime=${departureDate}&endDateTime=${arrivalDate}`
+        const events = await axios.get(fullUrl)
+        if(events.data.events) {
+            const results = events.data.events
+            let toReturn = createCustomMarker(results, 'events')
+            return toReturn
+        }
+    }
+
+    const handlePoi = async () => {
+        setIsLoading(!isLoading)
+        let newMarkers: Markers[] = []
+        if(isRestaurantsSearching) {
+            let res = await searhRestaurants()
+            if(res !== undefined) {
+                newMarkers = newMarkers.concat(res)
+            }
+        }
+        if(isHotelsSearching) {
+            let res = await searchHotel()
+            if(res !== undefined) {
+                newMarkers = newMarkers.concat(res)
+            }
+        }
+        if(isBarsSearching) {
+            let res = await searhBars()
+            if(res !== undefined) {
+                newMarkers = newMarkers.concat(res)
+            }
+        }
+        if(isEventsSearching) {
+            let res = await searchEvents()
+            if(res !== undefined) {
+                newMarkers = newMarkers.concat(res)
+            }
+        }
+        setMarkers(newMarkers)
+        setIsLoading(!isLoading)
     }
 
     const renderSwitch = (marker: Markers) => {
         switch (marker.type) {
             case 'restaurant' :
-                return <MarkerLogo  color="bg-lime-400" content="R" handler={onMarkerClick} index={marker.id}/>
+                return <MarkerLogo  color="bg-lime-400" content="R" handler={onMarkerClick} index={marker.id} markerType={marker.type} />
             case 'hotel':
-                return <MarkerLogo  color="bg-red-400" content="H" handler={onMarkerClick} index={marker.id}/>
+                return <MarkerLogo  color="bg-red-400" content="H" handler={onMarkerClick} index={marker.id} markerType={marker.type}/>
             case 'bars':
-                return <MarkerLogo  color="bg-blue-400" content="B" handler={onMarkerClick} index={marker.id}/>
+                return <MarkerLogo  color="bg-blue-400" content="B" handler={onMarkerClick} index={marker.id} markerType={marker.type}/>
+            case 'events':
+                return <MarkerLogo  color="bg-teal-400" content="E" handler={onMarkerClick} index={marker.id} markerType={marker.type}/>
         }
     }
 
@@ -186,10 +253,6 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
                 const distance = Math.round(calculateDistance(ne.lat(), ne.lng(), sw.lat(), ne.lng()) / 2)
                 
                 setMapRadius(distance)
-                setMarkers([])
-                setBarsSearching(false)
-                setHotelsSearching(false)
-                setRestaurantsSearching(false)
             }
             if(directionsOptions) {
                 calculateDirections(directionsOptions, newCenter)
@@ -214,43 +277,71 @@ const MapView: React.FC<Props> = ({width, height, zoomDef, margin}) => {
         }
     }
 
-    const addWaypoints = (item: PlaceDetail) => {
+    const addWaypoints = (item: PlaceDetail | null | undefined, event: EventDetail | null | undefined) => {
         if(directionsOptions) {
-            let newWaypoint = {
-                place_id: item.place_id,
-                dir: {
-                    location: {lat: item.geometry.location.lat, lng: item.geometry.location.lng}, stopover: true
-                }
-            }
             let currentDirectionsOptions = JSON.parse(JSON.stringify(directionsOptions))
-            let waypointDetails = {
-                name: item.name,
-                address_components: item?.address_components,
-                photos: item?.photos,
-                phone_number: item?.international_phone_number,
-                rating: item?.rating,
-                place_id: item.place_id
+            let newWaypointCollection = []
+            if(item) {
+                let newWaypoint = {
+                    place_id: item.place_id,
+                    dir: {
+                        location: {lat: item.geometry.location.lat, lng: item.geometry.location.lng}, stopover: true
+                    }
+                }
+                let waypointDetails = {
+                    name: item.name,
+                    address_components: item?.address_components,
+                    photos: item?.photos,
+                    phone_number: item?.international_phone_number,
+                    rating: item?.rating,
+                    place_id: item.place_id,
+                    type: 'google'
+                }
+                newWaypointCollection = [...waypointsDetails, waypointDetails]
+                currentDirectionsOptions.waypoints!.push(newWaypoint.dir)
+                dispatch(addWaypoint(newWaypoint))
+                dispatch(addWaypointsDetails(waypointDetails))
+                calculateDirections(currentDirectionsOptions, center)
+                setIsShowingDetails(false)
+                setWaypointsDetails(newWaypointCollection)
             }
-            let newWaypointCollection = [...waypointsDetails, waypointDetails]
-            setWaypointsDetails(newWaypointCollection)
-            currentDirectionsOptions.waypoints!.push(newWaypoint.dir)
-            dispatch(addWaypoint(newWaypoint))
-            dispatch(addWaypointsDetails(waypointDetails))
-            calculateDirections(currentDirectionsOptions, center)
-            setIsShowingDetails(false)
+
+            if(event) {
+                let newWaypoint = {
+                    event_id: event.id,
+                    dir: {
+                        location: {lat: Number(event._embedded.venues[0].location.latitude), lng: Number(event._embedded.venues[0].location.longitude)}, stopover: true
+                    }
+                }
+                let waypointDetails = {
+                    name: event.name,
+                    event_id: event.id,
+                    images: event.images[0].url,
+                    date: event.dates.start.localDate,
+                    address: event._embedded.venues,
+                    type: 'ticketmaster'
+                }
+                newWaypointCollection = [...waypointsDetails, waypointDetails]
+                currentDirectionsOptions.waypoints!.push(newWaypoint.dir)
+                dispatch(addWaypoint(newWaypoint))
+                dispatch(addWaypointsDetails(waypointDetails))
+                calculateDirections(currentDirectionsOptions, center)
+                setIsShowingDetails(false)
+                setWaypointsDetails(newWaypointCollection)
+            }
         }
     }
 
     return (
         <>  
-            <MapOptions searchHotel={searchHotel} searhBars={searhBars} searhRestaurants={searhRestaurants} 
+            <MapOptions
             isLoading={isLoading} setIsLoading={setIsLoading} isHotelsSearching={isHotelsSearching} setHotelsSearching={setHotelsSearching}
             isBarsSearching={isBarsSearching} setBarsSearching={setBarsSearching} isRestaurantsSearching={isRestaurantsSearching} 
-            setRestaurantsSearching={setRestaurantsSearching} setMarkers={setMarkers} markers={markers} />
-            <div className="w-full h-full overflow-hidden flex sm:flex-row flex-col-reverse">
-                <div className="w-full sm:w-1/3 h-1/2 sm:h-full  flex">
+            setRestaurantsSearching={setRestaurantsSearching} handlePoi={handlePoi} isEventsSearching={isEventsSearching} setEventsSearching={setEventsSearching} />
+            <div className="w-full h-full grid grid-rows-1 grid-cols-12 overflow-hidden">
+                <div className="col-start-1 col-end-5">
                     {isShowingDetails ?
-                        <PlaceDetails content={placeDetails!} setIsShowingDetails={setIsShowingDetails} addWaypoints={addWaypoints} />
+                        <PlaceDetails content={placeDetails} setIsShowingDetails={setIsShowingDetails} addWaypoints={addWaypoints} isGoogleMapResult={isGoogleMapResult} eventContent={eventDetails} />
                     :
                         <TripDetails waypointsDetails={waypointsDetails} setWaypointsDetails={setWaypointsDetails} />
                     }

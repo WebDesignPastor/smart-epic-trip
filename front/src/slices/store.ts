@@ -16,7 +16,8 @@ export interface Dir {
 }
 
 export interface Waypoints {
-    place_id: string
+    place_id?: string
+    event_id?: string
     dir: Dir
 }
 
@@ -34,6 +35,8 @@ export interface InitialState {
     directionsOptions: DirectionsOptions
     waypointsDetails: WaypointsDetails[]
     baseWaypoints: Waypoints[]
+    startDate: string 
+    endDate: string
 }
 
 const initialState: InitialState = {
@@ -47,7 +50,9 @@ const initialState: InitialState = {
         optimizeWaypoints: true
     },
     waypointsDetails: [],
-    baseWaypoints: []
+    baseWaypoints: [],
+    startDate: '',
+    endDate: ''
 }
 
 const appSlice = createSlice({
@@ -86,23 +91,35 @@ const appSlice = createSlice({
             }
         },
         removeWaypoint: (state, action: PayloadAction<string>) => {
-            const wpToRemoveIndex = state.baseWaypoints.findIndex(wp => wp.place_id === action.payload)
-            const wpToRemove = state.baseWaypoints.find((wp) => wp.place_id === action.payload)
+            const wpToRemoveIndex = state.baseWaypoints.findIndex(wp => (wp.place_id === action.payload || wp.event_id === action.payload))
+            const wpToRemove = state.baseWaypoints.find((wp) => (wp.place_id === action.payload || wp.event_id === action.payload))
             if(wpToRemoveIndex !== -1) {
                 if(state.directionsOptions.waypoints?.length !== undefined && state.directionsOptions.waypoints?.length > 0) {
                     const wpDirectionIndex = state.directionsOptions.waypoints.findIndex(wp => current(wp) == current(wpToRemove?.dir))
                     state.directionsOptions.waypoints.splice(wpDirectionIndex, 1)
                 }
                 state.baseWaypoints.splice(wpToRemoveIndex, 1)
-                const wpDetailsRemoveIndex = state.waypointsDetails.findIndex((wp) => wp.place_id === action.payload)
+                const wpDetailsRemoveIndex = state.waypointsDetails.findIndex((wp) => (wp.place_id === action.payload || wp.event_id === action.payload))
                 if(wpDetailsRemoveIndex !== -1) {
                     state.waypointsDetails.splice(wpDetailsRemoveIndex, 1)
                 }
+            }
+        },
+        setDepartureDate: (state, action: PayloadAction<string>) => {
+            return {
+                ...state,
+                startDate: action.payload
+            }
+        },
+        setArrivlaDate:  (state, action: PayloadAction<string>) => {
+            return {
+                ...state,
+                endDate: action.payload
             }
         }
     }
     
 })
 
-export const {setTrip, setOrigin, setDestination, addWaypoint, addWaypointsDetails, removeWaypoint} = appSlice.actions
+export const {setTrip, setOrigin, setDestination, addWaypoint, addWaypointsDetails, removeWaypoint, setArrivlaDate, setDepartureDate} = appSlice.actions
 export default appSlice.reducer

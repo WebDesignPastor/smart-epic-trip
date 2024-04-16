@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { loadGoogleMapsAPI } from '../utils/loadGoogleMapsAPI';
 import { useDispatch } from 'react-redux';
-import { setDestination, setOrigin, setTrip } from '../slices/store';
+import { setArrivlaDate, setDepartureDate, setDestination, setOrigin, setTrip } from '../slices/store';
 import axios from 'axios';
 import { useNavigate } from "react-router-dom"
 
@@ -16,6 +16,8 @@ const CityForm: React.FC<CityFormProps> = ({ onSubmit }) => {
     const [arrival, setArrival] = useState('')
     const [submissionMessage, setSubmissionMessage] = useState('')
     const [isLoading, setIsLoading] = useState(false)
+    const [startDate, setStartDate] = useState('')
+    const [endDate, setEndDate] = useState('')
     const navigate = useNavigate()
 
     // Refs for the Autocomplete instances
@@ -50,7 +52,7 @@ const CityForm: React.FC<CityFormProps> = ({ onSubmit }) => {
 
     const handleSubmit = async (e: { preventDefault: () => void; }) => {
         e.preventDefault()
-        if(departure !== '' && arrival !== '') {
+        if(departure !== '' && arrival !== '' && endDate !== '' && startDate !== '') {
             setIsLoading(!isLoading)
             onSubmit(departure, arrival)
             setSubmissionMessage(`Vous allez de ${departure} à ${arrival}`)
@@ -58,12 +60,22 @@ const CityForm: React.FC<CityFormProps> = ({ onSubmit }) => {
             const arrivalLocationReq = await axios.get(`${apiUrl}/geocode?address=${arrival}`)
             const departureLocation = departureLocationReq.data.results[0].geometry.location
             const arrivalLocation = arrivalLocationReq.data.results[0].geometry.location
+            dispatch(setDepartureDate(`${startDate}T00:00:00Z`))
+            dispatch(setArrivlaDate(`${endDate}T23:59:59Z`))
             dispatch(setOrigin(departureLocation))
             dispatch(setDestination(arrivalLocation))
             dispatch(setTrip({origin: departure, destination: arrival}))
             setIsLoading(!isLoading)
             navigate('/map')
         }
+    }
+
+    const handleStartDateChange = (e: any) => {
+        setStartDate(e.target.value)
+    }
+
+    const handleEndDateChange = (e: any) => {
+        setEndDate(e.target.value)
     }
 
     return (
@@ -88,6 +100,26 @@ const CityForm: React.FC<CityFormProps> = ({ onSubmit }) => {
                         className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                         onChange={(e) => setArrival(e.target.value)}
                     />
+                </div>
+                <div className='flex w-full justify-between'>
+                    <div>
+                        <label className='mr-2'>Début :</label>
+                        <input 
+                            required
+                            type='date'
+                            value={startDate}
+                            onChange={handleStartDateChange}
+                        />
+                    </div>
+                    <div>
+                        <label className='mr-2'>Fin :</label>
+                        <input 
+                            required
+                            type='date'
+                            value={endDate}
+                            onChange={handleEndDateChange}
+                        />
+                    </div>
                 </div>
                 <button onClick={handleSubmit} type="submit" className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                     Okay let's gooo
