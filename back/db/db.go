@@ -8,7 +8,7 @@ import (
 )
 
 func New() *gorm.DB {
-	db, err := gorm.Open(sqlite.Open("golang-web.db"), &gorm.Config{})
+	db, err := gorm.Open(sqlite.Open("golang-web.db?_pragma=foreign_keys(1)"), &gorm.Config{})
 	if err != nil {
 		fmt.Println("storage err: ", err)
 	}
