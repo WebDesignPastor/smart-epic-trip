@@ -12,8 +12,8 @@ const GoogleTripCard: React.FC<Props> = ({content, photo, fullAddress, onlyText}
     return (
         <>
             {(content.photos && content.photos.length > 0) ?
-                <div className="max-w-[30%] mr-3">
-                    <img src={photo} className="w-full h-full" />
+                <div className="max-w-[30%]">
+                    <img src={photo} className="w-full h-full object-cover" />
                 </div>
                 :
                 <div  className="max-w-[30%]">
