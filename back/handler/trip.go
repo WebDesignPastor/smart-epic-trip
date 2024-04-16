@@ -35,6 +35,14 @@ func (h *Handler) GetAllByUser(c echo.Context) error {
 func (h *Handler) saveTrip(c echo.Context) error {
 	var t model.Trip
 	var req newTripRequest
+
+	jwt_id, err := middleware.ExtractId(c) // get id from jwt
+	if err != nil {
+		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
+	}
+
+	req.Trip.UserId = uint(jwt_id)
+
 	if err := req.bind(c, &t); err != nil {
 		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
 	}
