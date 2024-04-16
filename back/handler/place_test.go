@@ -7,34 +7,25 @@ import (
 	"testing"
 
 	"github.com/labstack/echo/v4"
+	"github.com/stretchr/testify/assert"
 )
 
-func TestCreatePlace(t *testing.T) {
-	// Create a new instance of the handler
-	handler := &Handler{} // Assuming you have initialized your handler struct somewhere
-
-	// Create a new HTTP request
-	req := httptest.NewRequest(http.MethodPost, "/places", strings.NewReader(`{"name":"Test Place","latitude":"123 Test St","longitude":"456 Test St"}`))
-
-	// Create a new HTTP response recorder
-	rec := httptest.NewRecorder()
-
-	// Create a new echo context
+func newTestEchoContext(method, path string, body string) (echo.Context, *httptest.ResponseRecorder) {
 	e := echo.New()
-	ctx := e.NewContext(req, rec)
+	req := httptest.NewRequest(method, path, strings.NewReader(body))
+	rec := httptest.NewRecorder()
+	return e.NewContext(req, rec), rec
+}
 
-	// Call the handler function
+func TestCreatePlace(t *testing.T) {
+	handler := &Handler{}
+
+	requestBody := `{"name":"Test Place","latitude":"123 Test St","longitude":"456 Test St"}`
+
+	ctx, rec := newTestEchoContext(http.MethodPost, "/places", requestBody)
+
 	err := handler.CreatePlace(ctx)
 
-	// Check for any errors returned by the handler function
-	if err != nil {
-		t.Fatalf("CreatePlace handler returned an error: %v", err)
-	}
-
-	// Check the response status code
-	if rec.Code != http.StatusCreated {
-		t.Errorf("Expected status code %d but got %d", http.StatusCreated, rec.Code)
-	}
-
-	// Add more assertions as needed
+	assert.NoError(t, err)
+	assert.Equal(t, http.StatusCreated, rec.Code)
 }
