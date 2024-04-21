@@ -10,7 +10,7 @@ import (
 func (h *Handler) Register(v1 *echo.Group) {
 	// User Routes
 	g := v1.Group("/users")
-	g.POST("/", h.SignUp)
+	g.POST("", h.SignUp)
 	g.POST("/login", h.Login)
 
 	//define jwt config here
@@ -29,6 +29,7 @@ func (h *Handler) Register(v1 *echo.Group) {
 
 	// Trip routes
 	t := v1.Group("/trips")
+	t.Use(echojwt.WithConfig(config))
 	t.GET("", h.GetAllByUser)
 	t.GET("/:id", h.GetTrip)
 	t.POST("", h.saveTrip)
