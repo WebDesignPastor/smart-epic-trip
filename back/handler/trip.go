@@ -18,12 +18,14 @@ func (h *Handler) GetAllByUser(c echo.Context) error {
 		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
 	}
 
+	req.UserId = uint(jwt_id)
+
 	if err := req.bind(c); err != nil {
 		return c.JSON(http.StatusBadRequest, utils.NewError(err))
 	}
 
 	// Retrieve all trips from the database for a User
-	trips, err := h.tripStore.GetAllByUser(uint(jwt_id))
+	trips, err := h.tripStore.GetAllByUser(req.UserId)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
 	}
