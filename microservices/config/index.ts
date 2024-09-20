@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 
-dotenv.config()
+dotenv.config();
+
 const config = {
     services: {
         googleApi: {
@@ -24,4 +25,10 @@ const config = {
     },
 }
 
-export default config
+// Log the configuration for debugging purposes
+console.log("Google API URL:", config.services.googleApi.url);
+console.log("TicketMaster API URL:", config.services.ticketMaster.url);
+console.log("Radius:", config.options.radius);
+console.log("Base Location:", config.options.baseLocation);
+
+export default config;
