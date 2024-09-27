@@ -37,5 +37,5 @@ func main() {
 	h.Register(g)
 
 	//e.Logger.Fatal(e.StartAutoTLS(":8080"))
-	e.Logger.Fatal(e.Start(":8080"))
+	e.Logger.Fatal(e.Start(":80"))
 }
