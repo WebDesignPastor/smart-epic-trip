@@ -198,7 +198,7 @@ az webapp config appsettings list --resource-group SmartEpicTrip --name EpicTrip
 
 ### Microservices
 ```bash
-az webapp config appsettings set --resource-group SmartEpicTrip --name EpicTripMicroservicesApp --settings TICKETMASTER_API_KEY={TICKETMASTER_API_KEY} TICKETMASTER_API_URL=https://app.ticketmaster.com/discovery/v2/events GOOGLE_API_KEY=AIzaSyDZ3-01pGDJZRH1-wThW8leVG6-deQNAWc GOOGLE_API_URL=https://maps.googleapis.com/maps/api/place/nearbysearch/json GOOGLE_API_AUTOCOMPLETE_URL=https://maps.googleapis.com/maps/api/place/autocomplete/json GOOGLE_API_PLACE_DETAILS_URL=https://maps.googleapis.com/maps/api/place/details/json GOOGLE_API_GEOCODE_URL=https://maps.googleapis.com/maps/api/geocode/json RADIUS=50000 PORT=8080
+az webapp config appsettings set --resource-group SmartEpicTrip --name EpicTripMicroservicesApp --settings TICKETMASTER_API_KEY={TICKETMASTER_API_KEY} TICKETMASTER_API_URL=https://app.ticketmaster.com/discovery/v2/events GOOGLE_API_KEY={GOOGLE_API_KEY} GOOGLE_API_URL=https://maps.googleapis.com/maps/api/place/nearbysearch/json GOOGLE_API_AUTOCOMPLETE_URL=https://maps.googleapis.com/maps/api/place/autocomplete/json GOOGLE_API_PLACE_DETAILS_URL=https://maps.googleapis.com/maps/api/place/details/json GOOGLE_API_GEOCODE_URL=https://maps.googleapis.com/maps/api/geocode/json RADIUS=50000 PORT=8080
 ```
 
 #### Check configuration for the microservices
