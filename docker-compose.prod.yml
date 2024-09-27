@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   back:
-    image: smartepicroadtrip.azurecr.io/t-web-800-ren_8-back:latest
+    image: smartepictripacr.azurecr.io/backend:latest
     container_name: golang-web
     ports:
       - "8080:8080"
@@ -11,14 +11,14 @@ services:
     restart: on-failure
 
   front:
-    image: smartepicroadtrip.azurecr.io/t-web-800-ren_8-front:latest
+    image: smartepictripacr.azurecr.io/frontend:latest
     container_name: front
     ports:
       - "8000:8000"
     tty: true
 
   microservices:
-    image: smartepicroadtrip.azurecr.io/t-web-800-ren_8-microservices:latest
+    image: smartepictripacr.azurecr.io/microservices:latest
     container_name: microservices
     env_file:
       - ./microservices/.env
